@@ -1,38 +1,35 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import Home from '@/views/Home.vue'
+//import Home from '@/views/Home.vue'
 
 Vue.use(VueRouter)
 
 const routes = [
+  // {
+  //   // Document title tag
+  //   // We combine it with defaultDocumentTitle set in `src/main.js` on router.afterEach hook
+  //   meta: {
+  //     title: 'Dashboard'
+  //   },
+  //   path: '/',
+  //   name: 'home',
+  //   component: Home
+  // },
   {
-    // Document title tag
-    // We combine it with defaultDocumentTitle set in `src/main.js` on router.afterEach hook
     meta: {
-      title: 'Dashboard'
+      title: 'Import data'
     },
-    path: '/',
-    name: 'home',
-    component: Home
+    path: '/import-data',
+    name: 'import-data',    
+    component: () => import('@/views/ImportData.vue')
   },
   {
     meta: {
-      title: 'Tables'
+      title: 'Export data'
     },
-    path: '/tables',
-    name: 'tables',
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "tables" */ '@/views/Tables.vue')
-  },
-  {
-    meta: {
-      title: 'Forms'
-    },
-    path: '/forms',
-    name: 'forms',
-    component: () => import(/* webpackChunkName: "forms" */ '@/views/Forms.vue')
+    path: '/export-data',
+    name: 'export-data',    
+    component: () => import('@/views/ExportData.vue')
   },
   {
     meta: {
@@ -40,39 +37,30 @@ const routes = [
     },
     path: '/profile',
     name: 'profile',
-    component: () => import(/* webpackChunkName: "profile" */ '@/views/Profile.vue')
+    component: () => import('@/views/Profile.vue')
   },
   {
     meta: {
-      title: 'New Client'
+      title: 'Login'
     },
-    path: '/client/new',
-    name: 'client.new',
-    component: () => import(/* webpackChunkName: "client-form" */ '@/views/ClientForm.vue')
-  },
-  {
-    meta: {
-      title: 'Edit Client'
-    },
-    path: '/client/:id',
-    name: 'client.edit',
-    component: () => import(/* webpackChunkName: "client-form" */ '@/views/ClientForm.vue'),
-    props: true
-  },
-  {
-    path: '/full-page',
-    component: () => import(/* webpackChunkName: "full-page" */ '@/views/FullPage.vue'),
-    children: [
-      {
-        meta: {
-          title: 'Login'
-        },
-        path: '/login',
-        name: 'login',
-        component: () => import(/* webpackChunkName: "full-page" */ '@/views/full-page/Login.vue')
-      }
-    ]
-  }
+    path: '/login',
+    name: 'login',
+    component: () => import('@/views/full-page/Login.vue')
+  },  
+  // {
+  //   path: '/full-page',
+  //   component: () => import(/* webpackChunkName: "full-page" */ '@/views/FullPage.vue'),
+  //   children: [
+  //     {
+  //       meta: {
+  //         title: 'Login'
+  //       },
+  //       path: '/login',
+  //       name: 'login',
+  //       component: () => import(/* webpackChunkName: "full-page" */ '@/views/full-page/Login.vue')
+  //     }
+  //   ]
+  // }
 
 ]
 

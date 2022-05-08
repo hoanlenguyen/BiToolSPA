@@ -6,9 +6,7 @@
     "serve": "vue-cli-service serve",
     "serve:vite": "vite serve",
     "build": "vue-cli-service build --modern",
-    "build:vite": "vite build",
-    "lint": "vue-cli-service lint",
-    "lint:fix": "vue-cli-service lint --fix"
+    "build:vite": "vite build"
   },
   "dependencies": {
     "axios": "^0.26.0",
@@ -25,7 +23,6 @@
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "^5.0.4",
-    "@vue/cli-plugin-eslint": "^5.0.4",
     "@vue/cli-plugin-router": "^5.0.4",
     "@vue/cli-plugin-vuex": "^5.0.4",
     "@vue/cli-service": "^5.0.4",
