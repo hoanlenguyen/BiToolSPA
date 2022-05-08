@@ -38,29 +38,21 @@ const routes = [
     path: '/profile',
     name: 'profile',
     component: () => import('@/views/Profile.vue')
-  },
-  {
-    meta: {
-      title: 'Login'
-    },
-    path: '/login',
-    name: 'login',
-    component: () => import('@/views/full-page/Login.vue')
   },  
-  // {
-  //   path: '/full-page',
-  //   component: () => import(/* webpackChunkName: "full-page" */ '@/views/FullPage.vue'),
-  //   children: [
-  //     {
-  //       meta: {
-  //         title: 'Login'
-  //       },
-  //       path: '/login',
-  //       name: 'login',
-  //       component: () => import(/* webpackChunkName: "full-page" */ '@/views/full-page/Login.vue')
-  //     }
-  //   ]
-  // }
+  {
+    path: '/full-page',
+    component: () => import(/* webpackChunkName: "full-page" */ '@/views/FullPage.vue'),
+    children: [
+      {
+        meta: {
+          title: 'Login'
+        },
+        path: '/login',
+        name: 'login',
+        component: () => import(/* webpackChunkName: "full-page" */ '@/views/full-page/Login.vue')
+      }
+    ]
+  }
 
 ]
 

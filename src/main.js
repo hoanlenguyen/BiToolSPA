@@ -16,7 +16,7 @@ import App from './App.vue'
 store.dispatch('fetch', 'clients')
 
 /* Default title tag */
-const defaultDocumentTitle = 'Admin One Bulma Buefy'
+const defaultDocumentTitle = 'Automation tool'
 
 /* Collapse mobile aside menu on route change & set document title from route meta */
 router.afterEach(to => {
@@ -30,6 +30,7 @@ router.afterEach(to => {
 })
 
 Vue.config.productionTip = false
+Vue.config.devtools = process.env.NODE_ENV === 'development'
 
 Vue.use(Buefy)
 

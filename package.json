@@ -6,6 +6,8 @@
     "serve": "vue-cli-service serve",
     "serve:vite": "vite serve",
     "build": "vue-cli-service build --modern",
+    "build:prod": "vue-cli-service build",
+    "build:dev": "vue-cli-service build --mode dev",
     "build:vite": "vite build"
   },
   "dependencies": {

@@ -19,16 +19,6 @@ export default [
       to: '/export-data',
       label: 'Export data',
       icon: 'database-export'
-    },
-    {
-      to: '/profile',
-      label: 'Profile',
-      icon: 'account-circle-outline'
-    },
-    {
-      to: '/login',
-      label: 'Logout',
-      icon: 'logout-variant'
     }
     // {
     //   label: 'Submenus',
