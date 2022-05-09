@@ -15,11 +15,11 @@
       method="POST"
       @submit.prevent="submit"
     >
-      <b-field label="E-mail Address">
+      <b-field label="Username">
         <b-input
-          v-model="form.email"
-          name="email"
-          type="email"
+          v-model="form.userName"
+          name="text"
+          type="text"
           required
         />
       </b-field>
@@ -33,7 +33,7 @@
         />
       </b-field>
 
-      <b-field>
+      <!-- <b-field>
         <b-checkbox
           v-model="form.remember"
           type="is-black"
@@ -41,7 +41,7 @@
         >
           Remember me
         </b-checkbox>
-      </b-field>
+      </b-field> -->
 
       <hr>
 
@@ -55,14 +55,14 @@
             Login
           </b-button>
         </div>
-        <div class="control">
+        <!-- <div class="control">
           <router-link
             to="/"
             class="button is-outlined is-black"
           >
             Dashboard
           </router-link>
-        </div>
+        </div> -->
       </b-field>
     </form>
   </card-component>
@@ -70,7 +70,8 @@
 
 <script>
 import CardComponent from '@/components/CardComponent.vue'
-
+import { login } from "@/api/user";
+import {setToken} from '@/utils/auth';
 export default {
   name: 'Login',
   components: { CardComponent },
@@ -78,21 +79,39 @@ export default {
     return {
       isLoading: false,
       form: {
-        email: 'john.doe@example.com',
-        password: 'my-secret-password-9e9w',
-        remember: false
+        userName: '',
+        password: '',
       }
     }
   },
   methods: {
     submit () {
-      this.isLoading = true
+      this.isLoading = true;
+      login(this.form)
+        .then((response) => {
+          if (response.status==200) {
+            console.log(response.data);
+            setToken(response.data);
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+          // if (error.response) {
+          //   this.$message({
+          //     type: "error",
+          //     message: this.$t(`Lỗi: ${error.response.data.error.message}`),
+          //     showClose: true,
+          //   });
+          // }
+        })
+        .finally(() => {
+          this.isLoading = false;
+        });
+      // setTimeout(() => {
+      //   this.isLoading = false
 
-      setTimeout(() => {
-        this.isLoading = false
-
-        this.$router.push('/')
-      }, 750)
+      //   this.$router.push('/')
+      // }, 750)
     }
   }
 }

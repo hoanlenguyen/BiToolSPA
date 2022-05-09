@@ -2,16 +2,12 @@ import request from '@/utils/request'
 
 export function login(data) {
   return request({
-    url: '/api/TokenAuth/AuthenticateAdmin',
+    url: '/auth/login',
     method: 'post',
-    data: {
-      userNameOrEmailAddress: data.username,
-      password: data.password,
-      tenant: data.tenant
-    },
+    data,
     config: {
       headers: {
-        'Accept': 'application/json',
+        'Accept': '*/*',
         'Content-Type': 'application/json'
       }
     }
@@ -26,11 +22,7 @@ export function getInfo(token) {
 }
 
 export function logout() {
-  // return request({
-  //   url: '/login/logout',
-  //   method: 'post'
-  // })
-  return request()
+ 
 }
 
 export function updateUserProfileTradingAccount(data) {
