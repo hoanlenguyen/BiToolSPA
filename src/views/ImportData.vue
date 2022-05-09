@@ -20,6 +20,7 @@
 <script>
 //import XLSX from 'xlsx';
 import readXlsxFile from 'read-excel-file';
+import moment from 'moment';
 import { importCustomerScore } from "@/api/importData";
 export default {
   name: "Tables",
@@ -65,9 +66,20 @@ export default {
           type: String
         },
       };
+      const inputFormat = "DD/MM/YYYY";
+      const outputFormat = "YYYY-MM-DD";
       readXlsxFile(data,{ schema }).then(({ rows, errors }) => {
-        console.log(rows);
-        this.model.customerList= rows;
+        rows.forEach(element => {
+          // var isValidDate = moment(element.dateOccurred, inputFormat, true).isValid();
+          // if(isValidDate){
+          //   element.dateOccurred = moment(element.dateOccurred, inputFormat).format(outputFormat);
+          //   this.model.customerList.push(element);
+          // }
+          element.dateOccurred = moment(element.dateOccurred, inputFormat).format(outputFormat);
+
+        });
+      this.model.customerList= rows;
+      console.log(this.model.customerList);
       })
     },
     importData(){
@@ -91,6 +103,9 @@ export default {
         .finally(() => {
           this.isLoading = false;
         });
+    },
+    convertValidDate(intput){
+
     }
   }
 };

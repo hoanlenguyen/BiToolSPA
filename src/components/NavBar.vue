@@ -98,6 +98,7 @@
 <script>
 import { mapState } from "vuex";
 import NavBarMenu from "@/components/NavBarMenu.vue";
+import {setToken} from '@/utils/auth';
 //import UserAvatar from "@/components/UserAvatar.vue";
 
 export default {
