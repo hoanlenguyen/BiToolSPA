@@ -2,6 +2,24 @@
   <div>
     <section class="section is-main-section">
       <b-field grouped>
+        <b-field label="Creation Time from">
+            <b-datepicker
+                placeholder="Creationtime from"
+                icon="calendar-today"
+                locale="en-CA"                
+                v-model="dateFirstAddedFrom"
+                editable>
+            </b-datepicker>
+        </b-field>
+        <b-field label="Creation Time to">
+            <b-datepicker
+                placeholder="Creationtime to"
+                icon="calendar-today"
+                locale="en-CA"                
+                v-model="dateFirstAddedTo"
+                editable>
+            </b-datepicker>
+        </b-field>
         <b-field label="Admin score">
           <b-select
             placeholder="Select score title"
@@ -33,11 +51,18 @@
             </p>
         </b-field>         
       </b-field>
+      <b-field grouped>
+        <p class="control">
+            <b-button label="Download result" type="is-primary" @click="downloadCustomerExcel" :disabled="isDisableDownload"/>
+            </p>
+      </b-field>
     </section>
   </div>
 </template>
 
 <script>
+import XLSX from 'xlsx';
+import moment from 'moment';
 import { getAdminScores } from "@/api/importData";
 import { getCustomers } from "@/api/exportData";
 export default {
@@ -45,7 +70,7 @@ export default {
   components: {},
   created() {
     this.getAdminScoreList();
-  },
+  },  
   data() {
     return {
       adminScores: [
@@ -73,13 +98,22 @@ export default {
         dateFirstAddedFrom: null,
         dateFirstAddedTo: null,
       },
+      dateFirstAddedFrom:null,
+      dateFirstAddedTo: null,
       customerList:[]
     };
+  },
+  computed: {
+    isDisableDownload(){
+      return !this.customerList.length===0;
+    }
   },
   methods: {
     resetFilter(){
        this.filter={...this.defaultFilter};
        this.customerList=[];
+       this.dateFirstAddedFrom=null;
+       this.dateFirstAddedTo= null;
     },
     getAdminScoreList() {
       //this.isLoading = true;
@@ -99,11 +133,18 @@ export default {
     },
     getCustomerList() {
       //this.isLoading = true;
+      const outputFormat = "YYYY-MM-DD";
+      if(this.dateFirstAddedFrom)
+        this.filter.dateFirstAddedFrom= moment(this.dateFirstAddedFrom).format(outputFormat);
+
+      if(this.dateFirstAddedTo)
+        this.filter.dateFirstAddedTo= moment(this.dateFirstAddedTo).format(outputFormat);
+
       getCustomers(this.filter)
         .then((response) => {
           if (response.status == 200) {
             this.customerList= response.data;
-            console.log("customerList.length" +this.customerList.length);
+            console.log(this.customerList);
           }
         })
         .catch((error) => {
@@ -112,6 +153,9 @@ export default {
         .finally(() => {
         });
     },
+    downloadCustomerExcel(){
+      console.log("downloadCustomerExcel");
+    }
   },
 };
 </script>
