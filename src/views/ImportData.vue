@@ -23,7 +23,7 @@ import readXlsxFile from 'read-excel-file';
 import moment from 'moment';
 import { importCustomerScore } from "@/api/importData";
 export default {
-  name: "Tables",
+  name: "ImportData",
   components: {
   },
   data() {
