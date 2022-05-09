@@ -90,19 +90,29 @@ export default {
       login(this.form)
         .then((response) => {
           if (response.status==200) {
-            console.log(response.data);
-            setToken(response.data);
+            let userInfo = response.data;
+            //console.log(userInfo);
+            setToken(userInfo.accessToken);
+            this.$store.commit('user', {
+            name: userInfo.name,
+            email: userInfo.email,
+            avatar: ''
+            });
+            this.$router.push({ name: 'import-data' });
+          }else{
+            setToken('');
+            this.$buefy.snackbar.open({
+              message: "login failed!",
+              queue: false
+            });
           }
         })
         .catch((error) => {
-          console.log(error);
-          // if (error.response) {
-          //   this.$message({
-          //     type: "error",
-          //     message: this.$t(`Lỗi: ${error.response.data.error.message}`),
-          //     showClose: true,
-          //   });
-          // }
+          setToken('');
+          this.$buefy.snackbar.open({
+            message: "login failed!",
+            queue: false
+          });
         })
         .finally(() => {
           this.isLoading = false;

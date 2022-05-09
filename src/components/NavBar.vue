@@ -142,10 +142,8 @@ export default {
       this.isMenuActive = !this.isMenuActive;
     },
     logout() {
-      this.$buefy.snackbar.open({
-        message: "Log out clicked",
-        queue: false,
-      });
+      setToken('');
+      this.$router.push({ name: 'login' });
     },
   },
 };

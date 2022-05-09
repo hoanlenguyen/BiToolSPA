@@ -4,14 +4,7 @@ export function login(data) {
   return request({
     url: '/auth/login',
     method: 'post',
-    data,
-    config: {
-      headers: {
-        'Accept': '*/*',
-        'Content-Type': 'application/json'
-      }
-    }
-  })
+    data})
 }
 
 export function getInfo(token) {
