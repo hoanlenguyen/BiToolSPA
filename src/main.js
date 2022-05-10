@@ -12,6 +12,9 @@ import store from './store'
 /* Vue. Main component */
 import App from './App.vue'
 
+/* add mixin */
+import mixin from './utils/mixin'
+
 /* Fetch sample data */
 store.dispatch('fetch', 'clients')
 
@@ -28,6 +31,8 @@ router.afterEach(to => {
     document.title = defaultDocumentTitle
   }
 })
+
+Vue.mixin(mixin)
 
 Vue.config.productionTip = false
 Vue.config.devtools = process.env.NODE_ENV === 'development'

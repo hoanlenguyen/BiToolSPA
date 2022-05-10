@@ -15,3 +15,10 @@ export function getAdminScores() {
       method: 'get'
     })
   }
+
+  export function getAdminCampaigns() {
+    return request({
+      url: '/data/getAdminCampaigns',
+      method: 'get'
+    })
+  }
