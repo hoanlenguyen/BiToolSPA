@@ -43,7 +43,6 @@ export default {
     }
   },
   methods: {
-
     readFileData(data){
       //console.log(data);
       // var workbook = XLSX.read(this.file, { type: 'binary' })

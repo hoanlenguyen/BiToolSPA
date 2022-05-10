@@ -7,3 +7,11 @@ export function getCustomers(data) {
       params: data
     })
   }
+
+export function assignCampaignToCustomers(data) {
+    return request({
+      url: '/data/assignCampaignToCustomers',
+      method: 'post',
+      data
+    })
+}
