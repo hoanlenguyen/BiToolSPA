@@ -239,7 +239,7 @@ export default {
         let mobileList = this.customerList.map((p) => ({
           CustomerMobileNo: p,
         }));
-        this.exportExcelData(mobileList, "CustomerMobileNo", 30);
+        this.exportExcelData(mobileList, "CustomerMobileNoList", 30);
       }
     },
     assignCampaignToCustomers() {

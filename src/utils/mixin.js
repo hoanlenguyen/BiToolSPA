@@ -4,7 +4,6 @@ var myMixin = {
     methods: {
         exportExcelData(data, excelName, wch = null) {
             var animalWS = XLSX.utils.json_to_sheet(data);
-            console.log("data[0]: "+ data[0]);
             if (wch && data && data.length) {
                 var size = Object.keys(data[0]).length;
                 if (size) {

@@ -1,11 +1,11 @@
 import request from '@/utils/request'
 
-export function importCustomerScore(data) {
-  //console.log(data);
+export function importCustomerScore(input) {
   return request({
-    url: '/data/importCustomerScoreList',
+    url: '/data/importCustomerScore',
     method: 'post',
-    data
+    data: input,
+    headers: {'Content-Type': 'multipart/form-data'}
     })
 }
 
