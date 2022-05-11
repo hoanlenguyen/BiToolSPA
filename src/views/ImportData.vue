@@ -143,7 +143,7 @@ export default {
             this.isShowResult = true;
             this.errorList= response.data;
             this.$buefy.snackbar.open({
-              message: `Import ${this.file?.name} successfully!`,
+              message: `Import ${this.fileName} successfully!`,
               queue: false,
             });
           }
