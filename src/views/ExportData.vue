@@ -23,19 +23,11 @@
           </b-datepicker>
         </b-field>
         <b-field label="Admin score">
-          <b-select
-            placeholder="Select score title"
-            v-model="filter.scoreId"
-            clearable
-          >
-            <option
-              v-for="option in adminScores"
-              :value="option.scoreID"
-              :key="option.scoreID"
-            >
-              {{ option.scoreTitle }}
-            </option>
-          </b-select>
+          <multiselect v-model="selectScores" 
+          tag-placeholder="Add this as new tag" placeholder="Search or add a tag" 
+          label="scoreTitle" track-by="scoreID" :options="adminScores" 
+          :multiple="true" :taggable="true" selectLabel="Add" deselectLabel="Remove">            
+          </multiselect>
         </b-field>
         <b-field label="Mobile No">
           <b-input
@@ -87,7 +79,11 @@
             :disabled="isDisableDownload"
           />
         </p>
-        <b-field label="Select campaign" class="control" v-show="isShowCampaign">
+        <b-field
+          label="Select campaign"
+          class="control"
+          v-show="isShowCampaign"
+        >
           <b-select
             placeholder="Select campaign"
             v-model="campaignModel.campaignID"
@@ -116,11 +112,12 @@
 
 <script>
 import moment from "moment";
+import Multiselect from 'vue-multiselect';
 import { getAdminScores, getAdminCampaigns } from "@/api/importData";
 import { getCustomers, assignCampaignToCustomers } from "@/api/exportData";
 export default {
   name: "ExportData",
-  components: {},
+  components: {Multiselect},
   created() {
     this.getAdminScoreList();
     this.getAdminCampaignList();
@@ -129,19 +126,20 @@ export default {
     return {
       adminScores: [],
       adminCampaigns: [],
+      selectScores:[],
       campaignModel: {
         customerList: [],
         campaignID: null,
       },
       filter: {
-        scoreId: null,
+        scoreIds: null,
         scoreCategory: null,
         keyWord: null,
         dateFirstAddedFrom: null,
         dateFirstAddedTo: null,
       },
       defaultFilter: {
-        scoreId: null,
+        scoreIds: null,
         scoreCategory: null,
         keyWord: null,
         dateFirstAddedFrom: null,
@@ -169,6 +167,7 @@ export default {
       this.dateFirstAddedTo = null;
       this.isShowResult = false;
       this.isShowCampaign = false;
+      this.selectScores=[];
     },
     getAdminScoreList() {
       //this.isLoading = true;
@@ -176,7 +175,7 @@ export default {
         .then((response) => {
           if (response.status == 200) {
             this.adminScores = response.data;
-            console.log(this.adminScores);
+            //console.log(this.adminScores);
           } else if (response.status == 401) {
             this.$router.push({ name: "login" });
           }
@@ -215,7 +214,7 @@ export default {
         this.filter.dateFirstAddedTo = moment(this.dateFirstAddedTo).format(
           outputFormat
         );
-
+      this.filter.scoreIds= this.selectScores.map(p=>p.scoreID).join();
       getCustomers(this.filter)
         .then((response) => {
           if (response.status == 200) {
@@ -230,7 +229,7 @@ export default {
           this.isShowResult = true;
           this.isLoading = false;
           this.isShowCampaign = false;
-          this.campaignModel.campaignID =null;
+          this.campaignModel.campaignID = null;
         });
     },
     downloadCustomerExcel() {

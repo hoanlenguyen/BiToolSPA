@@ -38,7 +38,7 @@ export default {
   name: "ImportData",
   components: {},
   created() {
-    this.getAdminScoreList();
+    //this.getAdminScoreList();
   },
   data() {
     return {
@@ -58,7 +58,7 @@ export default {
   watch: {},
   methods: {
     getAdminScoreList() {
-      this.isLoading = true;
+      //this.isLoading = true;
       getAdminScores()
         .then((response) => {
           if (response.status == 200) {
@@ -76,7 +76,7 @@ export default {
           //console.log(error);
         })
         .finally(() => {
-          this.isLoading = false;
+          //this.isLoading = false;
         });
     },
     // readFileData(data) {
