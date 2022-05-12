@@ -24,7 +24,7 @@
         </b-field>
         <b-field label="Admin score">
           <multiselect v-model="selectScores" 
-          tag-placeholder="Add this as new tag" placeholder="Search or add a tag" 
+          tag-placeholder="" placeholder="Select score titles" 
           label="scoreTitle" track-by="scoreID" :options="adminScores" 
           :multiple="true" :taggable="true" selectLabel="Add" deselectLabel="Remove">            
           </multiselect>
@@ -238,7 +238,7 @@ export default {
         let mobileList = this.customerList.map((p) => ({
           CustomerMobileNo: p,
         }));
-        this.exportExcelData(mobileList, "CustomerMobileNoList", 30);
+        this.exportExcelData(mobileList, "CustomerMobileNoList", 30, false);
       }
     },
     assignCampaignToCustomers() {
