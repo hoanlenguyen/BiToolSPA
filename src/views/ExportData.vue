@@ -2,9 +2,9 @@
   <div>
     <section class="section is-main-section">
       <b-field grouped>
-        <b-field label="Creation Time from">
+        <b-field label="Date First Added from">
           <b-datepicker
-            placeholder="Creationtime from"
+            placeholder="Date First Added from"
             icon="calendar-today"
             locale="en-CA"
             v-model="dateFirstAddedFrom"
@@ -12,9 +12,9 @@
           >
           </b-datepicker>
         </b-field>
-        <b-field label="Creation Time to">
+        <b-field label="Date First Added to">
           <b-datepicker
-            placeholder="Creationtime to"
+            placeholder="Date First Added to"
             icon="calendar-today"
             locale="en-CA"
             v-model="dateFirstAddedTo"
