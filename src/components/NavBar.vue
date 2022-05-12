@@ -44,15 +44,14 @@
     <div
       class="navbar-menu fadeIn animated faster"
       :class="{ 'is-active': isMenuActive }"
-    >
-      <div class="navbar-end">
+    >    
+      <div class="navbar-end">        
         <nav-bar-menu class="has-divider has-user-avatar">
           <span class="mr-2">Hi,</span>
           <div class="is-user-name">
             <span>{{ userName }}</span>
           </div>
-
-          <div slot="dropdown" class="navbar-dropdown">
+          <!-- <div slot="dropdown" class="navbar-dropdown">
             <router-link
               to="/profile"
               class="navbar-item"
@@ -69,12 +68,12 @@
               <b-icon icon="email" custom-size="default" />
               <span>Messages</span>
             </a>
-            <!-- <hr class="navbar-divider" />
+            <hr class="navbar-divider" />
             <a class="navbar-item">
               <b-icon icon="logout" custom-size="default" />
               <span>Log Out</span>
-            </a> -->
-          </div>
+            </a>
+          </div>  -->
         </nav-bar-menu>
         <router-link
           to="/login"
