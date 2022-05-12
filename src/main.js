@@ -15,12 +15,24 @@ import App from './App.vue'
 /* add mixin */
 import mixin from './utils/mixin'
 
+import { getToken } from '@/utils/auth'
 
 /* Fetch sample data */
-store.dispatch('fetch', 'clients')
+//store.dispatch('fetch', 'clients')
 
 /* Default title tag */
 const defaultDocumentTitle = 'Automation tool'
+
+
+
+router.beforeEach((to, from, next) => {
+  let token=getToken()  
+  //console.log(to.name);
+  //console.log(token);
+  if(!token && to.name!=='login') 
+    next({ name: 'login' })
+  next()
+})
 
 /* Collapse mobile aside menu on route change & set document title from route meta */
 router.afterEach(to => {

@@ -143,6 +143,7 @@ export default {
     },
     logout() {
       setToken('');
+      this.$store.commit('user',  {});
       this.$router.push({ name: 'login' });
     },
   },
