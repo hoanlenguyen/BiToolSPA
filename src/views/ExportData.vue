@@ -1,10 +1,13 @@
 <template>
   <div>
     <section class="section is-main-section">
-      <b-field grouped>
-        <b-field label="Date First Added from">
+      <b-field grouped class="mb-3">
+        <div class="mr-3">
+          <p class="title is-6">Customer</p>
+          <p class="subtitle is-6">Date First Added from</p>
+        </div>
+        <b-field>
           <b-datepicker
-            placeholder="Date First Added from"
             icon="calendar-today"
             locale="en-CA"
             v-model="dateFirstAddedFrom"
@@ -12,9 +15,12 @@
           >
           </b-datepicker>
         </b-field>
-        <b-field label="Date First Added to">
+        <div class="mr-3">
+          <p class="title is-6 has-text-warning-light">.</p>
+          <p class="subtitle is-6">to</p>
+        </div>
+        <b-field>
           <b-datepicker
-            placeholder="Date First Added to"
             icon="calendar-today"
             locale="en-CA"
             v-model="dateFirstAddedTo"
@@ -22,33 +28,306 @@
           >
           </b-datepicker>
         </b-field>
-        <b-field label="Admin score">
-          <multiselect v-model="selectScores" 
-          tag-placeholder="" placeholder="Select score titles" 
-          label="scoreTitle" track-by="scoreID" :options="adminScores" 
-          :multiple="true" :taggable="true" selectLabel="Add" deselectLabel="Remove">            
-          </multiselect>
+        <div>
+          <p>
+            <b-radio v-model="filter.sortingValue" size="is-small" native-value="DateFirstAdded asc">
+              ASC 
+            </b-radio>
+          </p>
+          <p>
+            <b-radio v-model="filter.sortingValue" size="is-small" native-value="DateFirstAdded desc">
+              DESC
+            </b-radio>
+          </p>
+        </div>
+      </b-field>
+
+      <b-field grouped class="mb-4">
+        <div class="mr-3">
+          <p class="title is-6">Campaigns</p>
+          <p class="subtitle is-6">Total Times Exported from</p>
+        </div>
+        <b-field>
+          <b-input v-model="filter.totalTimesExportedFrom" type="number"></b-input>
         </b-field>
-        <b-field label="Mobile No">
-          <b-input
-            placeholder="Search mobileNo..."
-            type="search"
-            icon="magnify"
-            v-model="filter.keyWord"
+        <div class="mr-3">
+          <p class="title is-6 has-text-warning-light">.</p>
+          <p class="subtitle is-6">to</p>
+        </div>
+        <b-field>
+          <b-input v-model="filter.totalTimesExportedTo" type="number"></b-input>
+        </b-field>       
+      </b-field>
+
+      <b-field grouped class="mb-3">
+        <div class="mr-3">
+          <p class="subtitle is-6 pt-3">Date Last Export from</p>
+        </div>
+        <b-field>
+          <b-datepicker
+            icon="calendar-today"
+            locale="en-CA"
+            v-model="dateLastExportedFrom"
+            editable
           >
-          </b-input>
+          </b-datepicker>
+        </b-field>
+        <div class="mr-3">
+          <p class="subtitle is-6 pt-3">to</p>
+        </div>
+        <b-field>
+          <b-datepicker
+            icon="calendar-today"
+            locale="en-CA"
+            v-model="dateLastExportedTo"
+            editable
+          >
+          </b-datepicker>
+        </b-field> 
+      </b-field>
+
+      <b-field grouped class="mb-3">
+        <div class="mr-3">
+          <p class="subtitle is-6 pt-3">Last 3 Campaigns Used</p>
+        </div>
+        <b-field>
+          <multiselect
+            v-model="selectLast3CampaignsUsed"
+            tag-placeholder=""
+            placeholder="Select campaigns"
+            label="campaignName"
+            track-by="campaignID"
+            :options="adminCampaigns"
+            :multiple="true"
+            :max="3"
+            :taggable="true"
+            selectLabel="Add"
+            deselectLabel="Remove"
+          >
+          </multiselect>
         </b-field>
       </b-field>
 
-      <h5 class="subtitle is-6" v-show="isShowResult">
-        <span>Found {{ customerList.length }} customer mobile numbers</span>
-      </h5>
-      <h5 class="subtitle is-6 has-text-white" v-show="!isShowResult">
-        <span>></span>
+      <b-field grouped class="mb-3">
+        <div class="mr-3">
+          <p class="title is-6">Occurrence (Indicators)</p>
+          <p class="subtitle is-6">Date Last Occurred from</p>
+        </div>
+        <b-field>
+          <b-datepicker
+            icon="calendar-today"
+            locale="en-CA"
+            v-model="dateLastOccurredFrom"
+            editable
+          >
+          </b-datepicker>
+        </b-field>
+        <div class="mr-3">
+          <p class="title is-6 has-text-warning-light">.</p>
+          <p class="subtitle is-6">to</p>
+        </div>
+        <b-field>
+          <b-datepicker
+            icon="calendar-today"
+            locale="en-CA"
+            v-model="dateLastOccurredTo"
+            editable
+          >
+          </b-datepicker>
+        </b-field>         
+      </b-field>
+
+      <b-field grouped class="mb-3">
+        <div class="mr-3">
+          <p class="subtitle is-6 mt-3">Occurred Categories</p>
+        </div>
+        <b-field>
+          <multiselect
+            v-model="selectOccurredCategories"
+            tag-placeholder=""
+            placeholder="Select Occurred Categories"
+            label="scoreTitle"
+            track-by="scoreID"
+            :options="occurredCategories"
+            :multiple="true"
+            :taggable="true"
+            selectLabel="Add"
+            deselectLabel="Remove"
+          >
+          </multiselect>
+        </b-field>
+      </b-field>
+
+      <b-field grouped class="mb-3">
+        <div class="mr-3">
+          <p class="subtitle is-6 mt-3">Total Occurrence Points from</p>
+        </div>
+        <b-field>
+          <b-input v-model="filter.totalOccurancePointsFrom" type="number"></b-input>
+        </b-field>
+        <div class="mr-3">
+          <p class="subtitle is-6 mt-3">to</p>
+        </div>
+        <b-field>
+          <b-input v-model="filter.totalOccurancePointsTo" type="number"></b-input>
+        </b-field>
+        <div>
+          <p>
+            <b-radio v-model="filter.sortingValue" size="is-small" native-value="TotalOccurancePoints asc">
+              ASC 
+            </b-radio>
+          </p>
+          <p>
+            <b-radio v-model="filter.sortingValue" size="is-small" native-value="TotalOccurancePoints desc">
+              DESC
+            </b-radio>
+          </p>
+        </div>    
+      </b-field>
+      
+      <b-field grouped class="mb-3">
+        <div class="mr-3">
+          <p class="title is-6">Results</p>
+          <p class="subtitle is-6">Results Categories</p>
+        </div>
+        <b-field>
+          <multiselect
+            v-model="selectResultsCategories"
+            tag-placeholder=""
+            placeholder="Select Results Categories"
+            label="scoreTitle"
+            track-by="scoreID"
+            :options="resultsCategories"
+            :multiple="true"
+            :taggable="true"
+            selectLabel="Add"
+            deselectLabel="Remove"
+          >
+          </multiselect>
+        </b-field>
+      </b-field>
+
+      <b-field grouped class="mb-3">
+        <div class="mr-3">
+          <p class="subtitle is-6 mt-3">Total Results Points from</p>
+        </div>
+        <b-field>
+          <b-input v-model="filter.totalResultsPointsFrom" type="number"></b-input>
+        </b-field>
+        <div class="mr-3">
+          <p class="subtitle is-6 mt-3">to</p>
+        </div>
+        <b-field>
+          <b-input v-model="filter.totalResultsPointsTo" type="number"></b-input>
+        </b-field>
+        <div>
+          <p>
+            <b-radio v-model="filter.sortingValue" size="is-small" native-value="TotalResultsPoints asc">
+              ASC 
+            </b-radio>
+          </p>
+          <p>
+            <b-radio v-model="filter.sortingValue" size="is-small" native-value="TotalResultsPoints desc">
+              DESC
+            </b-radio>
+          </p>
+        </div>    
+      </b-field>
+
+      <b-field grouped class="mb-3">
+        <div class="mr-3">
+          <p class="title is-6">Analysis</p>
+          <p class="subtitle is-6">Total Points from</p>
+        </div>
+        <b-field>
+          <b-input v-model="filter.totalPointsFrom" type="number"></b-input>
+        </b-field>
+         <div class="mr-3">
+          <p class="subtitle is-6 mt-3">to</p>
+        </div>
+        <b-field>
+          <b-input v-model="filter.totalPointsTo" type="number"></b-input>
+        </b-field>
+        <div>
+          <p>
+            <b-radio v-model="filter.sortingValue" size="is-small" native-value="TotalPoints asc">
+              ASC 
+            </b-radio>
+          </p>
+          <p>
+            <b-radio v-model="filter.sortingValue" size="is-small" native-value="TotalPoints desc">
+              DESC
+            </b-radio>
+          </p>
+        </div>
+      </b-field>
+
+      <b-field grouped class="mb-3">
+        <div class="mr-3">
+          <p class="subtitle is-6 mt-3">Export vs Points (%) from</p>
+        </div>
+        <b-field>
+          <b-input v-model="filter.exportVsPointsPercentageFrom" type="number"></b-input>
+        </b-field>
+         <div class="mr-3">
+          <p class="subtitle is-6 mt-3">to</p>
+        </div>
+        <b-field>
+          <b-input v-model="filter.exportVsPointsPercentageTo" type="number"></b-input>
+        </b-field>        
+      </b-field>
+
+      <b-field grouped class="mb-3">
+        <div class="mr-3">
+          <p class="subtitle is-6 mt-3">Export vs Points Exceptions</p>
+        </div>
+        <b-field>
+          <multiselect
+            v-model="selectExportVsPointsExceptions"
+            tag-placeholder=""
+            placeholder="Select exceptions"             
+            :options="exportVsPointsExceptions"
+            :multiple="true"
+            :taggable="true"
+            selectLabel="Add"
+            deselectLabel="Remove"
+          >
+          </multiselect>
+        </b-field>
+        
+      </b-field>
+
+      <b-field grouped class="mb-3">
+        <div class="mr-3">
+          <p class="subtitle is-6 mt-3">Export vs Points (in Points) from</p>
+        </div>
+        <b-field>
+          <b-input v-model="filter.exportVsPointsNumberFrom" type="number"></b-input>
+        </b-field>
+         <div class="mr-3">
+          <p class="subtitle is-6 mt-3">to</p>
+        </div>
+        <b-field>
+          <b-input v-model="filter.exportVsPointsNumberTo" type="number"></b-input>
+        </b-field>  
+      </b-field>
+
+      <b-field grouped class="mb-3">
+        <div class="mr-3">
+          <p class="title is-6">Others</p>
+          <p class="subtitle is-6">Export top</p>
+        </div>
+        <b-field>
+          <b-input v-model="filter.exportTop" type="number"></b-input> <span class="ml-3 mt-3">numbers</span>
+        </b-field>        
+      </b-field>      
+      <h5 class="subtitle is-6 mb-1">
+        <span  v-show="isShowResult">Found {{ customerList.length }} customer mobile numbers</span>
+         <span v-show="!isShowResult">.</span>
       </h5>
 
       <b-field grouped>
-        <p class="control pt-5 mt-2">
+        <p class="control">
           <b-button
             label="Search"
             type="is-link"
@@ -80,7 +359,6 @@
           />
         </p>
         <b-field
-          label="Select campaign"
           class="control"
           v-show="isShowCampaign"
         >
@@ -112,12 +390,12 @@
 
 <script>
 import moment from "moment";
-import Multiselect from 'vue-multiselect';
+import Multiselect from "vue-multiselect";
 import { getAdminScores, getAdminCampaigns } from "@/api/importData";
 import { getCustomers, assignCampaignToCustomers } from "@/api/exportData";
 export default {
-  name: "ExportData",
-  components: {Multiselect},
+  name: "ExportDataNew",
+  components: { Multiselect },
   created() {
     this.getAdminScoreList();
     this.getAdminCampaignList();
@@ -126,27 +404,105 @@ export default {
     return {
       adminScores: [],
       adminCampaigns: [],
-      selectScores:[],
+      occurredCategories:[],
+      resultsCategories:[],
+      exportVsPointsExceptions:["No Occurance","No Export"],
+      selectOccurredCategories:[],
+      selectResultsCategories:[],
+      selectExportVsPointsExceptions:[],
+      selectLast3CampaignsUsed:[],
       campaignModel: {
         customerList: [],
         campaignID: null,
       },
       filter: {
-        scoreIds: null,
-        scoreCategory: null,
-        keyWord: null,
         dateFirstAddedFrom: null,
         dateFirstAddedTo: null,
+
+        totalTimesExportedFrom: null,
+        totalTimesExportedTo: null,
+        
+        dateLastExportedFrom: null,
+        dateLastExportedTo: null,
+
+        last3CampaignsUsed:null,
+
+        dateLastOccurredFrom:null,
+        dateLastOccurredTo:null,
+
+        occurredCategories:null,
+        
+        totalOccurancePointsFrom:null,
+        totalOccurancePointsTo:null,
+
+        resultsCategories:null,
+
+        totalResultsPointsFrom:null,
+        totalResultsPointsTo:null,
+
+        totalPointsFrom:null,
+        totalPointsTo:null,
+
+        exportVsPointsPercentageFrom:null,
+        exportVsPointsPercentageTo:null,
+
+        exportVsPointsExceptions:null,
+
+        exportVsPointsNumberFrom:null,
+        exportVsPointsNumberTo:null,
+
+        sortBy:null,
+        sortDirection:null,
+        sortingValue:null,
+        exportTop:null
       },
       defaultFilter: {
-        scoreIds: null,
-        scoreCategory: null,
-        keyWord: null,
         dateFirstAddedFrom: null,
         dateFirstAddedTo: null,
+
+        totalTimesExportedFrom: null,
+        totalTimesExportedTo: null,
+        
+        dateLastExportedFrom: null,
+        dateLastExportedTo: null,
+
+        last3CampaignsUsed:null,
+
+        dateLastOccurredFrom:null,
+        dateLastOccurredTo:null,
+
+        occurredCategories:null,
+        
+        totalOccurancePointsFrom:null,
+        totalOccurancePointsTo:null,
+
+        resultsCategories:null,
+
+        totalResultsPointsFrom:null,
+        totalResultsPointsTo:null,
+
+        totalPointsFrom:null,
+        totalPointsTo:null,
+
+        exportVsPointsPercentageFrom:null,
+        exportVsPointsPercentageTo:null,
+
+        exportVsPointsExceptions:null,
+
+        exportVsPointsNumberFrom:null,
+        exportVsPointsNumberTo:null,
+
+        sortBy:null,
+        sortDirection:null,
+        sortingValue:null,
+        exportTop:null
       },
       dateFirstAddedFrom: null,
-      dateFirstAddedTo: null,
+      dateFirstAddedTo: null,   
+      dateLastExportedFrom: null,
+      dateLastExportedTo: null,
+      dateLastOccurredFrom: null,
+      dateLastOccurredTo: null,         
       customerList: [],
       isShowResult: false,
       isLoading: false,
@@ -167,7 +523,10 @@ export default {
       this.dateFirstAddedTo = null;
       this.isShowResult = false;
       this.isShowCampaign = false;
-      this.selectScores=[];
+      this.selectLast3CampaignsUsed=[];
+      this.selectOccurredCategories=[];
+      this.selectResultsCategories=[];
+      this.selectExportVsPointsExceptions=[];
     },
     getAdminScoreList() {
       //this.isLoading = true;
@@ -175,6 +534,8 @@ export default {
         .then((response) => {
           if (response.status == 200) {
             this.adminScores = response.data;
+            this.occurredCategories= this.adminScores.filter(p=>p.scoreCategory=='Occurance');
+            this.resultsCategories=this.adminScores.filter(p=>p.scoreCategory=='Results');
             //console.log(this.adminScores);
           } else if (response.status == 401) {
             this.$router.push({ name: "login" });
@@ -205,16 +566,39 @@ export default {
     getCustomerList() {
       this.isLoading = true;
       const outputFormat = "YYYY-MM-DD";
-      if (this.dateFirstAddedFrom)
-        this.filter.dateFirstAddedFrom = moment(this.dateFirstAddedFrom).format(
-          outputFormat
-        );
+      this.filter.dateFirstAddedFrom =this.dateFirstAddedFrom? moment(this.dateFirstAddedFrom).format(outputFormat):null;
+      this.filter.dateFirstAddedTo =this.dateFirstAddedTo? moment(this.dateFirstAddedTo).format(outputFormat):null;
 
-      if (this.dateFirstAddedTo)
-        this.filter.dateFirstAddedTo = moment(this.dateFirstAddedTo).format(
-          outputFormat
-        );
-      this.filter.scoreIds= this.selectScores.map(p=>p.scoreID).join();
+      this.filter.dateLastExportedFrom =this.dateLastExportedFrom? moment(this.dateLastExportedFrom).format(outputFormat):null;
+      this.filter.dateLastExportedTo =this.dateLastExportedTo? moment(this.dateLastExportedTo).format(outputFormat):null;
+
+      this.filter.dateLastOccurredFrom =this.dateLastOccurredFrom? moment(this.dateLastOccurredFrom).format(outputFormat):null;
+      this.filter.dateLastOccurredTo =this.dateLastOccurredTo? moment(this.dateLastOccurredTo).format(outputFormat):null;      
+
+      this.filter.last3CampaignsUsed =this.selectLast3CampaignsUsed.length>0?
+        this.selectLast3CampaignsUsed.map((p) => p.campaignID).join() : null;
+
+      this.filter.occurredCategories = this.selectOccurredCategories.length>0?
+        this.selectOccurredCategories.map((p) => p.scoreID).join(): null;
+      
+      this.filter.resultsCategories =this.selectResultsCategories.length>0?
+        this.selectResultsCategories.map((p) => p.scoreID).join(): null;
+      
+      this.filter.exportVsPointsExceptions =this.selectExportVsPointsExceptions.length>0?
+        this.selectExportVsPointsExceptions.join(): null;
+      
+      if(this.filter.sortingValue){
+        const myArray = this.filter.sortingValue.split(" ");
+        this.filter.sortBy=myArray[0];
+        this.filter.sortDirection=myArray[1];
+      }else{
+        this.filter.sortBy=null;
+        this.filter.sortDirection=null;
+      }
+
+      if(!this.filter.exportTop ||isNaN(this.filter.exportTop))
+        this.filter.exportTop=null;
+
       getCustomers(this.filter)
         .then((response) => {
           if (response.status == 200) {
@@ -266,4 +650,4 @@ export default {
   },
 };
 </script>
-<style src="vue-multiselect/dist/vue-multiselect.min.css"></style> 
+<style src="vue-multiselect/dist/vue-multiselect.min.css"></style>

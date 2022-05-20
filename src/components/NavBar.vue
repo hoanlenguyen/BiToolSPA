@@ -51,7 +51,7 @@
           <div class="is-user-name">
             <span>{{ userName }}</span>
           </div>
-          <!-- <div slot="dropdown" class="navbar-dropdown">
+         <div slot="dropdown" class="navbar-dropdown">
             <router-link
               to="/profile"
               class="navbar-item"
@@ -60,7 +60,7 @@
               <b-icon icon="account" custom-size="default" />
               <span>My Profile</span>
             </router-link>
-            <a class="navbar-item">
+            <!--  <a class="navbar-item">
               <b-icon icon="settings" custom-size="default" />
               <span>Settings</span>
             </a>
@@ -72,8 +72,8 @@
             <a class="navbar-item">
               <b-icon icon="logout" custom-size="default" />
               <span>Log Out</span>
-            </a>
-          </div>  -->
+            </a> -->
+          </div> 
         </nav-bar-menu>
         <router-link
           to="/login"
