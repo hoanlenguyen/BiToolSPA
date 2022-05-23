@@ -1,46 +1,63 @@
 <template>
   <div>
     <section class="section is-main-section">
-      <b-field grouped class="mb-3">
-        <div class="mr-3">
-          <p class="title is-6">Customer</p>
-          <p class="subtitle is-6">Date First Added from</p>
+      <div class="columns">
+        <div class="column is-11  m-0 pb-0">
+          <b-field grouped>
+            <div class="mr-3">
+              <p class="title is-6">Customer</p>
+              <p class="subtitle is-6">Date First Added from</p>
+            </div>
+
+            <b-field>
+              <b-datepicker
+                icon="calendar-today"
+                locale="en-CA"
+                v-model="dateFirstAddedFrom"
+                editable
+              >
+              </b-datepicker>
+            </b-field>
+            <div class="mr-3">
+              <p class="title is-6 has-text-white-bis">.</p>
+              <p class="subtitle is-6">to</p>
+            </div>
+            <b-field>
+              <b-datepicker
+                icon="calendar-today"
+                locale="en-CA"
+                v-model="dateFirstAddedTo"
+                editable
+              >
+              </b-datepicker>
+            </b-field>
+            <div>
+              <p>
+                <b-radio v-model="filter.sortingValue" size="is-small" native-value="DateFirstAdded asc">
+                  ASC 
+                </b-radio>
+              </p>
+              <p>
+                <b-radio v-model="filter.sortingValue" size="is-small" native-value="DateFirstAdded desc">
+                  DESC
+                </b-radio>
+              </p>
+            </div>        
+          </b-field>
         </div>
-        <b-field>
-          <b-datepicker
-            icon="calendar-today"
-            locale="en-CA"
-            v-model="dateFirstAddedFrom"
-            editable
-          >
-          </b-datepicker>
-        </b-field>
-        <div class="mr-3">
-          <p class="title is-6 has-text-warning-light">.</p>
-          <p class="subtitle is-6">to</p>
+        <div class="column  m-0 pb-0">
+          <b-button           
+            class="button"
+            @click="isImageModalActive = true" 
+            style="padding: 0; border: none; background: none;">
+            <b-icon
+                    icon="file-image-outline"
+                size="is-medium"
+                type="is-info">
+            </b-icon>
+          </b-button>
         </div>
-        <b-field>
-          <b-datepicker
-            icon="calendar-today"
-            locale="en-CA"
-            v-model="dateFirstAddedTo"
-            editable
-          >
-          </b-datepicker>
-        </b-field>
-        <div>
-          <p>
-            <b-radio v-model="filter.sortingValue" size="is-small" native-value="DateFirstAdded asc">
-              ASC 
-            </b-radio>
-          </p>
-          <p>
-            <b-radio v-model="filter.sortingValue" size="is-small" native-value="DateFirstAdded desc">
-              DESC
-            </b-radio>
-          </p>
-        </div>
-      </b-field>
+      </div>
 
       <b-field grouped class="mb-4">
         <div class="mr-3">
@@ -51,7 +68,7 @@
           <b-input v-model="filter.totalTimesExportedFrom" type="number"></b-input>
         </b-field>
         <div class="mr-3">
-          <p class="title is-6 has-text-warning-light">.</p>
+          <p class="title is-6 has-text-white-bis">.</p>
           <p class="subtitle is-6">to</p>
         </div>
         <b-field>
@@ -104,6 +121,10 @@
             selectLabel="Add"
             deselectLabel="Remove"
           >
+          <template slot="maxElements" >
+            <p class="subtitle is-6 has-text-danger my-2">Maximum of 3 options selected.</p>
+            <p class="subtitle is-6 has-text-danger my-2">First remove a selected option to select another.</p>
+          </template>
           </multiselect>
         </b-field>
       </b-field>
@@ -123,7 +144,7 @@
           </b-datepicker>
         </b-field>
         <div class="mr-3">
-          <p class="title is-6 has-text-warning-light">.</p>
+          <p class="title is-6 has-text-white-bis">.</p>
           <p class="subtitle is-6">to</p>
         </div>
         <b-field>
@@ -323,7 +344,7 @@
       </b-field>      
       <h5 class="subtitle is-6 mb-1">
         <span  v-show="isShowResult">Found {{ customerList.length }} customer mobile numbers</span>
-         <span v-show="!isShowResult">.</span>
+        <span v-show="!isShowResult" class="has-text-white-bis">.</span>
       </h5>
 
       <b-field grouped>
@@ -384,6 +405,11 @@
           />
         </b-field>
       </b-field>
+        <b-modal v-model="isImageModalActive"  :width="`100%`" scroll="keep">
+          <figure  class="image is-3by1 is-fullwidth">
+            <img src="../assets/lead_management_report.png">
+          </figure>
+      </b-modal>
     </section>
   </div>
 </template>
@@ -508,6 +534,7 @@ export default {
       isLoading: false,
       isShowCampaign: false,
       isConfirmingCampaign: false,
+      isImageModalActive:false
     };
   },
   computed: {
