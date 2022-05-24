@@ -7,9 +7,9 @@ export function login(data) {
     data})
 }
 
-export function getInfo(token) {
+export function getProfile(token) {
   return request({
-    url: '/api/services/app/Profile/GetUserLoginInfo',
+    url: '/auth/getProfile',
     method: 'get'
   })
 }
@@ -18,11 +18,10 @@ export function logout() {
  
 }
 
-export function updateUserProfileTradingAccount(data) {
+export function changePassword(data) {
   return request({
-    url: '/api/services/app/User/UpdateUserProfileTradingAccount',
-    method: 'put',
-    data
-  })
+    url: '/auth/changePassword',
+    method: 'post',
+    data})
 }
 

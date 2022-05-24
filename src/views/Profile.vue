@@ -1,19 +1,8 @@
 <template>
   <div>
-    <title-bar :title-stack="titleStack" />
-    <hero-bar>
-      Profile
-      <router-link
-        slot="right"
-        to="/"
-        class="button"
-      >
-        Dashboard
-      </router-link>
-    </hero-bar>
     <section class="section is-main-section">
       <tiles>
-        <profile-update-form class="tile is-child" />
+       <!-- <profile-update-form class="tile is-child" /> -->
         <card-component
           title="Profile"
           icon="account"
@@ -38,7 +27,65 @@
           </b-field>
         </card-component>
       </tiles>
-      <password-update-form />
+      <card-component
+      title="Change Password"
+      icon="lock"
+  >
+    <form @submit.prevent="submit" style="width:1000px">
+      <b-field
+        horizontal
+        label="Current password"
+        message="Required. Your current password"
+      >
+        <b-input
+          v-model="form.currentPassword"
+          name="currentPassword"
+          type="password"
+          required
+          autcomplete="currentPassword"
+        />
+      </b-field>
+      <hr>
+      <b-field
+        horizontal
+        label="New password"
+        message="Required. New password"
+      >
+        <b-input
+          v-model="form.newPassword"
+          name="newPassword"
+          type="password"
+          required
+          autocomplete="newPassword"
+        />
+      </b-field>
+      <b-field
+        horizontal
+        label="Confirm password"
+        message="Required. New password one more time"
+      >
+        <b-input
+          v-model="form.confirmNewPassword"
+          name="confirmNewPassword"
+          type="password"
+          required
+          autocomplete="confirmNewPassword"
+        />
+      </b-field>
+      <hr>
+      <b-field horizontal>
+        <div class="control">
+          <b-button
+            native-type="submit"
+            type="is-info"
+            :loading="isLoading"
+          >
+            Submit
+          </b-button>
+        </div>
+      </b-field>
+    </form>
+  </card-component>
     </section>
   </div>
 </template>
@@ -52,7 +99,7 @@ import ProfileUpdateForm from '@/components/ProfileUpdateForm.vue'
 import PasswordUpdateForm from '@/components/PasswordUpdateForm.vue'
 import Tiles from '@/components/Tiles.vue'
 import UserAvatar from '@/components/UserAvatar.vue'
-
+import { changePassword } from "@/api/user";
 export default {
   name: 'Profile',
   components: {
@@ -66,7 +113,12 @@ export default {
   },
   data () {
     return {
-      titleStack: ['Admin', 'Profile']
+       form:{
+         currentPassword: null,
+         newPassword:null,
+         confirmNewPassword:null
+       },
+       isLoading:false
     }
   },
   computed: {
@@ -74,6 +126,33 @@ export default {
       'userName',
       'userEmail'
     ])
+  },
+  methods:{
+    submit() {
+      this.isLoading = true;
+      changePassword(this.form)
+        .then((response) => {
+          if (response.status == 200) {
+            this.$buefy.snackbar.open({
+              message: "Changed password successfully",
+              queue: false,
+            });
+           this.$router.push({ name: "login" });            
+          }else{
+
+          }  
+        })
+        .catch((error) => {
+           this.$buefy.snackbar.open({
+            message: error.error,
+            queue: false,
+            type: 'is-warning'
+          });
+        })
+        .finally(() => {
+          this.isLoading = false;
+        });
+    },
   }
 }
 </script>

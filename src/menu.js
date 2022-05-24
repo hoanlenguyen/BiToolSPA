@@ -15,11 +15,11 @@ export default [
       icon: 'database-import',
       // updateMark: true
     },
-    // {
-    //   to: '/export-data',
-    //   label: 'Export data',
-    //   icon: 'database-export'
-    // }
+    {
+      to: '/export-data',
+      label: 'Export data',
+      icon: 'database-export'
+    }
     // {
     //   label: 'Submenus',
     //   subLabel: 'Submenus Example',

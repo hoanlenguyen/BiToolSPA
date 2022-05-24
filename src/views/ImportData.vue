@@ -18,11 +18,16 @@
         <b-button type="is-info" @click="importData" :loading="isLoading" :disabled="!file" label="Import Data" 
           icon-left="database-import"/>
       </b-field>
-      <b-field class="mt-5">
-        <h5 class="subtitle is-6" v-show="isShowResult">Import {{fileName}} successfully!</h5>
+      <b-field class="mt-5" v-show="isShowResult">
+        <h5 class="subtitle is-6">Import {{fileName}} successfully!</h5>
       </b-field>
-      <b-field class="mt-5">
-        <b-button label="Download error list" class="mr-3" type="is-primary" @click="downloadErrorListExcel" v-show="errorList.length>0 &&isShowResult"/>
+       <div class="mt-5" v-show="isShowResult">
+        <h5 class="subtitle is-6" >Total rows: <strong>{{totalRows}}</strong></h5>
+        <h5 class="subtitle is-6" >Total imported rows: <strong>{{totalImportedRows}}</strong></h5>
+        <h5 class="subtitle is-6" >Total error rows: <strong>{{totalErrorRows}}</strong></h5>
+      </div>
+      <b-field class="mt-5"  v-show="errorList.length>0 &&isShowResult">
+        <b-button label="Download error list" class="mr-3" type="is-primary" @click="downloadErrorListExcel"/>
       </b-field>
       
     </section>
@@ -30,8 +35,6 @@
 </template>
 
 <script>
-//import XLSX from 'xlsx';
-//import readXlsxFile from "read-excel-file";
 import moment from "moment";
 import { importCustomerScore, getAdminScores } from "@/api/importData";
 export default {
@@ -44,12 +47,11 @@ export default {
     return {
       file: null,
       fileName:'',
-      model: {
-        customerList: [],
-      },
+      totalRows:0,
+      totalErrorRows:0,
+      totalImportedRows:0,
       errorList: [],
-      adminScores: [],
-      adminScoreTitles: [],
+      adminScores: [],      
       isLoadProcessExcel: false,
       isLoading: false,
       isShowResult:false
@@ -58,100 +60,53 @@ export default {
   watch: {},
   methods: {
     getAdminScoreList() {
-      //this.isLoading = true;
       getAdminScores()
         .then((response) => {
           if (response.status == 200) {
-            this.adminScores = response.data;
-            this.adminScoreTitles = this.adminScores.map((p) =>
-              p.scoreTitle.toLowerCase()
-            );
-            //console.log(this.adminScoreTitles);
-            //console.log(this.adminScores);
+            this.adminScores = response.data;             
           } else if (response.status == 401) {
             this.$router.push({ name: "login" });
           }
         })
         .catch((error) => {
-          //console.log(error);
         })
         .finally(() => {
-          //this.isLoading = false;
         });
-    },
-    // readFileData(data) {
-    //   this.isLoadProcessExcel=true;
-    //   this.isShowResult=false;
-    //   this.errorList = [];
-    //   this.model.customerList=[];
-    //   const schema = {
-    //     "Date Occurred": {
-    //       prop: "dateOccurred",
-    //       type: String,
-    //     },
-    //     "Customer Mobile No": {
-    //       prop: "customerMobileNo",
-    //       type: String,
-    //     },
-    //     "Score Title": {
-    //       prop: "scoreTitle",
-    //       type: String,
-    //     },
-    //   };
-    //   const inputFormat = "DD/MM/YYYY";
-    //   const outputFormat = "YYYY-MM-DD";
-    //   var isValidDate = true;
-    //   var isValidPhoneNumber = true;
-    //   var isValidScoreTiltles = true;
-    //   readXlsxFile(data, { schema }).then(({ rows, errors }) => {
-    //     rows.forEach((item, index) => {
-    //       isValidScoreTiltles = this.adminScoreTitles.some((value) =>
-    //         value.includes(item.scoreTitle.toLowerCase())
-    //       );
-    //       isValidDate = moment(item.dateOccurred,inputFormat,true).isValid();
-    //       isValidPhoneNumber = this.checkValidPhoneNumber(
-    //         item.customerMobileNo
-    //       );
-    //       item.dateOccurred = moment(item.dateOccurred,inputFormat).format(outputFormat);
-    //       if (!isValidDate)
-    //         this.errorList.push(`Cell A${index} - date invalid`);
-
-    //       if (!isValidPhoneNumber)
-    //         this.errorList.push(`Cell B${index} - mobile number invalid`);
-
-    //       if (!isValidScoreTiltles)
-    //         this.errorList.push(`Cell C${index} - score title invalid`);
-
-    //       if (isValidScoreTiltles && isValidDate && isValidPhoneNumber) {
-    //         this.model.customerList.push(item);
-    //       }
-    //     });
-    //     console.log('customerList:'+this.model.customerList.length);
-    //     //console.log(this.errorList);
-    //     this.isLoadProcessExcel=false;
-    //   });
-    // },
+    },     
     importData() {
       this.isLoading = true;
       this.isShowResult=false;
-      //console.log(this.model);
       let formData = new FormData();
       formData.append('file', this.file);
       importCustomerScore(formData)
         .then((response) => {
           if (response.status == 200) {
             this.isShowResult = true;
-            this.errorList= response.data;
+            var data = response.data;
+            if(data){
+              this.errorList= data.errorList;
+              this.totalRows= data.totalRows;
+              this.totalErrorRows= this.errorList.length;
+              this.totalImportedRows= this.totalRows- this.totalErrorRows;
+            }            
             this.$buefy.snackbar.open({
               message: `Import ${this.fileName} successfully!`,
               queue: false,
             });
+
+            // var counter = 0;
+            // var looper = setInterval(function(){ 
+            // counter++;
+            // console.log("Counter is: " + counter);
+            // if (counter >= 5)
+            // {
+            //     clearInterval(looper);
+            // }}, 1000);
           }
         })
         .catch((error) => {
-          console.log(error);
           this.$buefy.snackbar.open({
-            message: error.error,
+            message: error,
             queue: false,
             type: 'is-warning'
           });

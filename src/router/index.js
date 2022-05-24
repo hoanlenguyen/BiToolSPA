@@ -30,7 +30,7 @@ const routes = [
     path: '/export-data',
     name: 'export-data',    
     component: () => import('@/views/ExportData.vue')
-  },
+  }, 
   {
     meta: {
       title: 'Profile'
