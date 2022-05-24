@@ -93,6 +93,15 @@ export default {
               message: `Import ${this.fileName} successfully!`,
               queue: false,
             });
+
+            // var counter = 0;
+            // var looper = setInterval(function(){ 
+            // counter++;
+            // console.log("Counter is: " + counter);
+            // if (counter >= 5)
+            // {
+            //     clearInterval(looper);
+            // }}, 1000);
           }
         })
         .catch((error) => {
