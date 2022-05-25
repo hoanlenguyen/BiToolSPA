@@ -8,8 +8,8 @@
           icon="account"
           class="tile is-child"
         >
-          <user-avatar class="image has-max-width is-aligned-center" />
-          <hr>
+          <!-- <user-avatar class="image has-max-width is-aligned-center" />
+          <hr> -->
           <b-field label="Name">
             <b-input
               :value="userName"
@@ -93,10 +93,6 @@
 <script>
 import { mapState } from 'vuex'
 import CardComponent from '@/components/CardComponent.vue'
-import TitleBar from '@/components/TitleBar.vue'
-import HeroBar from '@/components/HeroBar.vue'
-import ProfileUpdateForm from '@/components/ProfileUpdateForm.vue'
-import PasswordUpdateForm from '@/components/PasswordUpdateForm.vue'
 import Tiles from '@/components/Tiles.vue'
 import UserAvatar from '@/components/UserAvatar.vue'
 import { changePassword } from "@/api/user";
@@ -105,10 +101,6 @@ export default {
   components: {
     UserAvatar,
     Tiles,
-    PasswordUpdateForm,
-    ProfileUpdateForm,
-    HeroBar,
-    TitleBar,
     CardComponent
   },
   data () {
@@ -130,6 +122,15 @@ export default {
   methods:{
     submit() {
       this.isLoading = true;
+      if (this.form.newPassword !== this.form.confirmNewPassword) {
+          this.$buefy.snackbar.open({
+            message: 'New password and confirm password do not match',
+            queue: false,
+            type: 'is-warning'
+          });
+          this.isLoading = false;
+          return;
+        }
       changePassword(this.form)
         .then((response) => {
           if (response.status == 200) {
@@ -139,14 +140,18 @@ export default {
             });
            this.$router.push({ name: "login" });            
           }else{
-
+            this.$buefy.snackbar.open({
+            message: 'Current password is not correct',
+            queue: false,
+            type: 'is-warning'
+          });
           }  
         })
         .catch((error) => {
            this.$buefy.snackbar.open({
-            message: error.error,
+            message: 'Current password is not correct',
             queue: false,
-            type: 'is-warning'
+            type: 'is-danger'
           });
         })
         .finally(() => {

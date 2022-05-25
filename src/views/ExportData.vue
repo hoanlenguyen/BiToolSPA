@@ -51,15 +51,15 @@
             @click="isImageModalActive = true" 
             style="padding: 0; border: none; background: none;">
             <b-icon
-                    icon="file-image-outline"
-                size="is-medium"
-                type="is-info">
+              icon="file-image-outline"
+              size="is-medium"
+              type="is-info">
             </b-icon>
           </b-button>
         </div>
       </div>
 
-      <b-field grouped class="mb-4">
+      <b-field grouped class="mb-3">
         <div class="mr-3">
           <p class="title is-6">Campaigns</p>
           <p class="subtitle is-6">Total Times Exported from</p>
@@ -191,19 +191,7 @@
         </div>
         <b-field>
           <b-input v-model="filter.totalOccurancePointsTo" type="number"></b-input>
-        </b-field>
-        <div>
-          <p>
-            <b-radio v-model="filter.sortingValue" size="is-small" native-value="TotalOccurancePoints asc">
-              ASC 
-            </b-radio>
-          </p>
-          <p>
-            <b-radio v-model="filter.sortingValue" size="is-small" native-value="TotalOccurancePoints desc">
-              DESC
-            </b-radio>
-          </p>
-        </div>    
+        </b-field>            
       </b-field>
       
       <b-field grouped class="mb-3">
@@ -240,19 +228,7 @@
         </div>
         <b-field>
           <b-input v-model="filter.totalResultsPointsTo" type="number"></b-input>
-        </b-field>
-        <div>
-          <p>
-            <b-radio v-model="filter.sortingValue" size="is-small" native-value="TotalResultsPoints asc">
-              ASC 
-            </b-radio>
-          </p>
-          <p>
-            <b-radio v-model="filter.sortingValue" size="is-small" native-value="TotalResultsPoints desc">
-              DESC
-            </b-radio>
-          </p>
-        </div>    
+        </b-field>            
       </b-field>
 
       <b-field grouped class="mb-3">
@@ -269,18 +245,6 @@
         <b-field>
           <b-input v-model="filter.totalPointsTo" type="number"></b-input>
         </b-field>
-        <div>
-          <p>
-            <b-radio v-model="filter.sortingValue" size="is-small" native-value="TotalPoints asc">
-              ASC 
-            </b-radio>
-          </p>
-          <p>
-            <b-radio v-model="filter.sortingValue" size="is-small" native-value="TotalPoints desc">
-              DESC
-            </b-radio>
-          </p>
-        </div>
       </b-field>
 
       <b-field grouped class="mb-3">
