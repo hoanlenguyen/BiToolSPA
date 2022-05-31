@@ -383,7 +383,7 @@
 import moment from "moment";
 import Multiselect from "vue-multiselect";
 import { getAdminScores, getAdminCampaigns } from "@/api/importData";
-import { getCustomers, getCustomerCount, assignCampaignToCustomers } from "@/api/exportData";
+import { getCustomers, getCustomerCount, assignCampaignToCustomers, downloadCustomersBySP } from "@/api/exportData";
 export default {
   name: "ExportData",
   components: { Multiselect },
@@ -651,13 +651,18 @@ export default {
       if(!this.filter.exportTop ||isNaN(this.filter.exportTop))
         this.filter.exportTop=null;
 
-      getCustomers(this.filter)
+      downloadCustomersBySP(this.filter)
         .then((response) => {
           if (response.status == 200 && response.data) {
-            const data=  response.data;
-            this.customerList = response.data;
-            //this.totalCount= this.customerList.length;
-            this.downloadCustomerExcel();
+            const data =  response.data;
+            if(data){
+                var blob = new Blob([data], {type: "application/octet-stream"});
+                var link = document.createElement('a');
+                link.href = window.URL.createObjectURL(blob);
+                var fileName = `CustomerList_${moment(new Date()).format("DD/MM/YYYY hh:mm:ss")}.xlsx`;
+                link.download = fileName;
+                link.click();
+            } 
           }
         })
         .catch((error) => {
@@ -681,10 +686,19 @@ export default {
       assignCampaignToCustomers(this.filter)
         .then((response) => {
           if (response.status == 200) {
-            this.$buefy.snackbar.open({
-              message: "Assign successfully!",
-              queue: false,
-            });
+            var data = response.data;
+            if(!data.shouldSendEmail){
+                 this.$buefy.snackbar.open({
+                  message: `Assign campaign successfully!`,
+                  queue: false,
+                });
+              }else{
+                this.$buefy.snackbar.open({
+                  message: `Assign campaign successfully!\nSystem will inform when the process of calculating LeadManagementReport is completed`,
+                  queue: false,
+                  duration: 6000
+                });
+              }
           }
         })
         .catch((error) => {

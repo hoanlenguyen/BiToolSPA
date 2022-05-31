@@ -129,12 +129,20 @@ export default {
               this.totalRows= data.totalRows;
               this.totalErrorRows= this.errorList.length;
               this.totalImportedRows= this.totalRows- this.totalErrorRows;
+              if(!data.shouldSendEmail){
+                 this.$buefy.snackbar.open({
+                  message: `Import ${this.fileName} successfully!`,
+                  queue: false,
+                });
+              }else{
+                this.$buefy.snackbar.open({
+                  message: `Import ${this.fileName} successfully!\nSystem will inform when the process of calculating LeadManagementReport is completed`,
+                  queue: false,
+                  duration: 6000
+                });
+              }
             }            
-            this.$buefy.snackbar.open({
-              message: `Import ${this.fileName} successfully!`,
-              queue: false,
-            });
-
+           
             // var counter = 0;
             // var looper = setInterval(function(){ 
             // counter++;

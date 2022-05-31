@@ -8,6 +8,15 @@ export function getCustomers(data) {
     })
 }
 
+export function downloadCustomersBySP(data) {
+  return request({
+    url: '/data/downloadCustomersBySP',
+    method: 'post',
+    data,
+    responseType: 'blob'
+  })
+}
+
 export function getCustomerCount(data) {
   return request({
     url: '/data/getCustomerCountBySP',
