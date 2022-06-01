@@ -136,7 +136,7 @@ export default {
                 });
               }else{
                 this.$buefy.snackbar.open({
-                  message: `Import ${this.fileName} successfully!\nSystem will inform when the process of calculating LeadManagementReport is completed`,
+                  message: `Import ${this.fileName} successfully!\nSystem will send email to inform when the new export data is ready`,
                   queue: false,
                   duration: 6000
                 });

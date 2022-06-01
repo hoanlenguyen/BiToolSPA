@@ -12,8 +12,7 @@ export function downloadCustomersBySP(data) {
   return request({
     url: '/data/downloadCustomersBySP',
     method: 'post',
-    data,
-    responseType: 'blob'
+    data
   })
 }
 

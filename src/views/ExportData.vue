@@ -382,6 +382,7 @@
 <script>
 import moment from "moment";
 import Multiselect from "vue-multiselect";
+import { saveAs } from 'file-saver';
 import { getAdminScores, getAdminCampaigns } from "@/api/importData";
 import { getCustomers, getCustomerCount, assignCampaignToCustomers, downloadCustomersBySP } from "@/api/exportData";
 export default {
@@ -443,7 +444,8 @@ export default {
         sortingValue:null,
         exportTop:null,
 
-        campaignID: null
+        campaignID: null,
+        totalCount: 0
       },
       defaultFilter: {
         dateFirstAddedFrom: null,
@@ -485,7 +487,9 @@ export default {
         sortDirection:null,
         sortingValue:null,
         exportTop:null,
-        campaignID: null
+
+        campaignID: null,
+        totalCount: 0
       },
       dateFirstAddedFrom: null,
       dateFirstAddedTo: null,   
@@ -586,9 +590,9 @@ export default {
         this.selectExportVsPointsExceptions.join(): null;
       
       if(this.filter.sortingValue){
-        const myArray = this.filter.sortingValue.split(" ");
-        this.filter.sortBy=myArray[0];
-        this.filter.sortDirection=myArray[1];
+        const sortingValue = this.filter.sortingValue.split(" ");
+        this.filter.sortBy=sortingValue[0];
+        this.filter.sortDirection=sortingValue[1];
       }else{
         this.filter.sortBy=null;
         this.filter.sortDirection=null;
@@ -601,7 +605,7 @@ export default {
         .then((response) => {
           if (response.status == 200 && response.data) {
             const data=  response.data;
-            this.totalCount= data.totalCount;
+            this.filter.totalCount=  this.totalCount= data.totalCount;
             //this.customerList = response.data;
             //console.log(this.customerList);
           }
@@ -640,9 +644,9 @@ export default {
         this.selectExportVsPointsExceptions.join(): null;
       
       if(this.filter.sortingValue){
-        const myArray = this.filter.sortingValue.split(" ");
-        this.filter.sortBy=myArray[0];
-        this.filter.sortDirection=myArray[1];
+        const sortingValue = this.filter.sortingValue.split(" ");
+        this.filter.sortBy=sortingValue[0];
+        this.filter.sortDirection=sortingValue[1];
       }else{
         this.filter.sortBy=null;
         this.filter.sortDirection=null;
@@ -655,13 +659,16 @@ export default {
         .then((response) => {
           if (response.status == 200 && response.data) {
             const data =  response.data;
-            if(data){
-                var blob = new Blob([data], {type: "application/octet-stream"});
-                var link = document.createElement('a');
-                link.href = window.URL.createObjectURL(blob);
-                var fileName = `CustomerList_${moment(new Date()).format("DD/MM/YYYY hh:mm:ss")}.xlsx`;
-                link.download = fileName;
-                link.click();
+            if(data.result){
+              const result=data.result;
+              for (let i = 0; i < result.length; i++) {   
+                let filename = result[i].substring(result[i].lastIndexOf('/')+1);
+                let fileUrl= result[i];
+                setTimeout(function() {          
+                  console.log(filename);
+                  saveAs(fileUrl, filename); },200);
+              }
+              this.isLoadingDownload=false;
             } 
           }
         })
@@ -694,7 +701,7 @@ export default {
                 });
               }else{
                 this.$buefy.snackbar.open({
-                  message: `Assign campaign successfully!\nSystem will inform when the process of calculating LeadManagementReport is completed`,
+                  message: `Assign campaign successfully!\nSystem will send email to inform when the new export data is ready`,
                   queue: false,
                   duration: 6000
                 });
