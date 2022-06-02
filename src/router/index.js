@@ -23,14 +23,14 @@ const routes = [
     name: 'import-data',    
     component: () => import('@/views/ImportData.vue')
   },
-  // {
-  //   meta: {
-  //     title: 'Export data'
-  //   },
-  //   path: '/export-data',
-  //   name: 'export-data',    
-  //   component: () => import('@/views/ExportData.vue')
-  // }, 
+  {
+    meta: {
+      title: 'Export data'
+    },
+    path: '/export-data',
+    name: 'export-data',    
+    component: () => import('@/views/ExportData.vue')
+  }, 
   {
     meta: {
       title: 'Profile'

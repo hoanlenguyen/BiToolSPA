@@ -51,15 +51,15 @@
             @click="isImageModalActive = true" 
             style="padding: 0; border: none; background: none;">
             <b-icon
-                    icon="file-image-outline"
-                size="is-medium"
-                type="is-info">
+              icon="file-image-outline"
+              size="is-medium"
+              type="is-info">
             </b-icon>
           </b-button>
         </div>
       </div>
 
-      <b-field grouped class="mb-4">
+      <b-field grouped class="mb-3">
         <div class="mr-3">
           <p class="title is-6">Campaigns</p>
           <p class="subtitle is-6">Total Times Exported from</p>
@@ -191,19 +191,7 @@
         </div>
         <b-field>
           <b-input v-model="filter.totalOccurancePointsTo" type="number"></b-input>
-        </b-field>
-        <div>
-          <p>
-            <b-radio v-model="filter.sortingValue" size="is-small" native-value="TotalOccurancePoints asc">
-              ASC 
-            </b-radio>
-          </p>
-          <p>
-            <b-radio v-model="filter.sortingValue" size="is-small" native-value="TotalOccurancePoints desc">
-              DESC
-            </b-radio>
-          </p>
-        </div>    
+        </b-field>            
       </b-field>
       
       <b-field grouped class="mb-3">
@@ -240,19 +228,7 @@
         </div>
         <b-field>
           <b-input v-model="filter.totalResultsPointsTo" type="number"></b-input>
-        </b-field>
-        <div>
-          <p>
-            <b-radio v-model="filter.sortingValue" size="is-small" native-value="TotalResultsPoints asc">
-              ASC 
-            </b-radio>
-          </p>
-          <p>
-            <b-radio v-model="filter.sortingValue" size="is-small" native-value="TotalResultsPoints desc">
-              DESC
-            </b-radio>
-          </p>
-        </div>    
+        </b-field>            
       </b-field>
 
       <b-field grouped class="mb-3">
@@ -269,18 +245,6 @@
         <b-field>
           <b-input v-model="filter.totalPointsTo" type="number"></b-input>
         </b-field>
-        <div>
-          <p>
-            <b-radio v-model="filter.sortingValue" size="is-small" native-value="TotalPoints asc">
-              ASC 
-            </b-radio>
-          </p>
-          <p>
-            <b-radio v-model="filter.sortingValue" size="is-small" native-value="TotalPoints desc">
-              DESC
-            </b-radio>
-          </p>
-        </div>
       </b-field>
 
       <b-field grouped class="mb-3">
@@ -343,7 +307,7 @@
         </b-field>        
       </b-field>      
       <h5 class="subtitle is-6 mb-1">
-        <span  v-show="isShowResult">Found {{ customerList.length }} customer mobile numbers</span>
+        <span  v-show="isShowResult">Found {{ formattedTotalCount }} customer mobile numbers</span>
         <span v-show="!isShowResult" class="has-text-white-bis">.</span>
       </h5>
 
@@ -354,7 +318,7 @@
             type="is-link"
             class="mr-3"
             icon-left="magnify"
-            @click="getCustomerList"
+            @click="getCustomerCount"
             :loading="isLoading"
           />
           <b-button
@@ -368,8 +332,9 @@
             label="Download result"
             class="mr-3"
             type="is-primary"
-            @click="downloadCustomerExcel"
+            @click="downloadCustomerList"
             :disabled="isDisableDownload"
+            :loading="isLoadingDownload"
           />
 
           <b-button
@@ -385,7 +350,7 @@
         >
           <b-select
             placeholder="Select campaign"
-            v-model="campaignModel.campaignID"
+            v-model="filter.campaignID"
             clearable
           >
             <option
@@ -400,7 +365,7 @@
             label="Confirm"
             type="is-primary"
             @click="assignCampaignToCustomers"
-            :disabled="!campaignModel.campaignID"
+            :disabled="!filter.campaignID"
             :loading="isConfirmingCampaign"
           />
         </b-field>
@@ -417,10 +382,11 @@
 <script>
 import moment from "moment";
 import Multiselect from "vue-multiselect";
+import { saveAs } from 'file-saver';
 import { getAdminScores, getAdminCampaigns } from "@/api/importData";
-import { getCustomers, assignCampaignToCustomers } from "@/api/exportData";
+import { getCustomers, getCustomerCount, assignCampaignToCustomers, downloadCustomersBySP } from "@/api/exportData";
 export default {
-  name: "ExportDataNew",
+  name: "ExportData",
   components: { Multiselect },
   created() {
     this.getAdminScoreList();
@@ -437,10 +403,6 @@ export default {
       selectResultsCategories:[],
       selectExportVsPointsExceptions:[],
       selectLast3CampaignsUsed:[],
-      campaignModel: {
-        customerList: [],
-        campaignID: null,
-      },
       filter: {
         dateFirstAddedFrom: null,
         dateFirstAddedTo: null,
@@ -480,7 +442,10 @@ export default {
         sortBy:null,
         sortDirection:null,
         sortingValue:null,
-        exportTop:null
+        exportTop:null,
+
+        campaignID: null,
+        totalCount: 0
       },
       defaultFilter: {
         dateFirstAddedFrom: null,
@@ -521,7 +486,10 @@ export default {
         sortBy:null,
         sortDirection:null,
         sortingValue:null,
-        exportTop:null
+        exportTop:null,
+
+        campaignID: null,
+        totalCount: 0
       },
       dateFirstAddedFrom: null,
       dateFirstAddedTo: null,   
@@ -530,8 +498,10 @@ export default {
       dateLastOccurredFrom: null,
       dateLastOccurredTo: null,         
       customerList: [],
+      totalCount: 0,
       isShowResult: false,
       isLoading: false,
+      isLoadingDownload: false,
       isShowCampaign: false,
       isConfirmingCampaign: false,
       isImageModalActive:false
@@ -539,12 +509,17 @@ export default {
   },
   computed: {
     isDisableDownload() {
-      return this.customerList.length == 0;
+      return this.totalCount == 0;
     },
+    formattedTotalCount(){
+      if(!this.totalCount) return '0';
+      return this.totalCount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    }
   },
   methods: {
     resetFilter() {
       this.filter = { ...this.defaultFilter };
+      this.totalCount=0;
       this.customerList = [];
       this.dateFirstAddedFrom = null;
       this.dateFirstAddedTo = null;
@@ -590,7 +565,7 @@ export default {
           //this.isLoading = false;
         });
     },
-    getCustomerList() {
+    getCustomerCount() {
       this.isLoading = true;
       const outputFormat = "YYYY-MM-DD";
       this.filter.dateFirstAddedFrom =this.dateFirstAddedFrom? moment(this.dateFirstAddedFrom).format(outputFormat):null;
@@ -615,9 +590,9 @@ export default {
         this.selectExportVsPointsExceptions.join(): null;
       
       if(this.filter.sortingValue){
-        const myArray = this.filter.sortingValue.split(" ");
-        this.filter.sortBy=myArray[0];
-        this.filter.sortDirection=myArray[1];
+        const sortingValue = this.filter.sortingValue.split(" ");
+        this.filter.sortBy=sortingValue[0];
+        this.filter.sortDirection=sortingValue[1];
       }else{
         this.filter.sortBy=null;
         this.filter.sortDirection=null;
@@ -626,10 +601,12 @@ export default {
       if(!this.filter.exportTop ||isNaN(this.filter.exportTop))
         this.filter.exportTop=null;
 
-      getCustomers(this.filter)
+      getCustomerCount(this.filter)
         .then((response) => {
-          if (response.status == 200) {
-            this.customerList = response.data;
+          if (response.status == 200 && response.data) {
+            const data=  response.data;
+            this.filter.totalCount=  this.totalCount= data.totalCount;
+            //this.customerList = response.data;
             //console.log(this.customerList);
           }
         })
@@ -640,12 +617,71 @@ export default {
           this.isShowResult = true;
           this.isLoading = false;
           this.isShowCampaign = false;
-          this.campaignModel.campaignID = null;
+        });
+    },
+    downloadCustomerList() {
+      this.isLoadingDownload = true;
+      const outputFormat = "YYYY-MM-DD";
+      this.filter.dateFirstAddedFrom =this.dateFirstAddedFrom? moment(this.dateFirstAddedFrom).format(outputFormat):null;
+      this.filter.dateFirstAddedTo =this.dateFirstAddedTo? moment(this.dateFirstAddedTo).format(outputFormat):null;
+
+      this.filter.dateLastExportedFrom =this.dateLastExportedFrom? moment(this.dateLastExportedFrom).format(outputFormat):null;
+      this.filter.dateLastExportedTo =this.dateLastExportedTo? moment(this.dateLastExportedTo).format(outputFormat):null;
+
+      this.filter.dateLastOccurredFrom =this.dateLastOccurredFrom? moment(this.dateLastOccurredFrom).format(outputFormat):null;
+      this.filter.dateLastOccurredTo =this.dateLastOccurredTo? moment(this.dateLastOccurredTo).format(outputFormat):null;      
+
+      this.filter.last3CampaignsUsed =this.selectLast3CampaignsUsed.length>0?
+        this.selectLast3CampaignsUsed.map((p) => p.campaignID).join() : null;
+
+      this.filter.occurredCategories = this.selectOccurredCategories.length>0?
+        this.selectOccurredCategories.map((p) => p.scoreID).join(): null;
+      
+      this.filter.resultsCategories =this.selectResultsCategories.length>0?
+        this.selectResultsCategories.map((p) => p.scoreID).join(): null;
+      
+      this.filter.exportVsPointsExceptions =this.selectExportVsPointsExceptions.length>0?
+        this.selectExportVsPointsExceptions.join(): null;
+      
+      if(this.filter.sortingValue){
+        const sortingValue = this.filter.sortingValue.split(" ");
+        this.filter.sortBy=sortingValue[0];
+        this.filter.sortDirection=sortingValue[1];
+      }else{
+        this.filter.sortBy=null;
+        this.filter.sortDirection=null;
+      }
+
+      if(!this.filter.exportTop ||isNaN(this.filter.exportTop))
+        this.filter.exportTop=null;
+
+      downloadCustomersBySP(this.filter)
+        .then((response) => {
+          if (response.status == 200 && response.data) {
+            const data =  response.data;
+            if(data.result){
+              const result=data.result;
+              for (let i = 0; i < result.length; i++) {   
+                let filename = result[i].substring(result[i].lastIndexOf('/')+1);
+                let fileUrl= result[i];
+                setTimeout(function() {          
+                  console.log(filename);
+                  saveAs(fileUrl, filename); },200);
+              }
+              this.isLoadingDownload=false;
+            } 
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+        })
+        .finally(() => {
+          this.isLoadingDownload=false;
         });
     },
     downloadCustomerExcel() {
       console.log("downloadCustomerExcel");
-      if (this.customerList.length > 0) {
+      if (this.totalCount > 0) {
         let mobileList = this.customerList.map((p) => ({
           CustomerMobileNo: p,
         }));
@@ -653,15 +689,23 @@ export default {
       }
     },
     assignCampaignToCustomers() {
-      this.campaignModel.customerList = [...this.customerList];
       this.isConfirmingCampaign = true;
-      assignCampaignToCustomers(this.campaignModel)
+      assignCampaignToCustomers(this.filter)
         .then((response) => {
           if (response.status == 200) {
-            this.$buefy.snackbar.open({
-              message: "Assign successfully!",
-              queue: false,
-            });
+            var data = response.data;
+            if(!data.shouldSendEmail){
+                 this.$buefy.snackbar.open({
+                  message: `Assign campaign successfully!`,
+                  queue: false,
+                });
+              }else{
+                this.$buefy.snackbar.open({
+                  message: `Assign campaign successfully!\nSystem will send email to inform when the new export data is ready`,
+                  queue: false,
+                  duration: 6000
+                });
+              }
           }
         })
         .catch((error) => {
@@ -670,7 +714,7 @@ export default {
         .finally(() => {
           // this.isShowResult = true;
           // this.isLoading = false;
-          this.campaignModel.campaignID = null;
+          this.filter.campaignID = null;
           this.isConfirmingCampaign = false;
         });
     },

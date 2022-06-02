@@ -6,7 +6,23 @@ export function getCustomers(data) {
       method: 'post',
       data
     })
-  }
+}
+
+export function downloadCustomersBySP(data) {
+  return request({
+    url: '/data/downloadCustomersBySP',
+    method: 'post',
+    data
+  })
+}
+
+export function getCustomerCount(data) {
+  return request({
+    url: '/data/getCustomerCountBySP',
+    method: 'post',
+    data
+  })
+}
 
 export function assignCampaignToCustomers(data) {
     return request({

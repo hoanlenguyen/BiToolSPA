@@ -9,6 +9,16 @@ export function importCustomerScore(input) {
     })
 }
 
+export function compareCustomerMobiles(input) {
+  return request({
+    url: '/data/compareCustomerMobiles',
+    method: 'post',
+    data: input,
+    headers: {'Content-Type': 'multipart/form-data'}
+    })
+}
+
+
 export function getAdminScores() {
     return request({
       url: '/data/getAdminScores',
