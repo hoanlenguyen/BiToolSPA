@@ -23,6 +23,9 @@ const store = new Vuex.Store({
     isAsideVisible: true,
     isAsideMobileExpanded: false,
 
+    /* signalR */
+    signalRConnectionId:null,
+
     /* Sample data (commonly used) */
     clients: []
   },
@@ -37,6 +40,13 @@ const store = new Vuex.Store({
     /* A fit-them-all commit */
     basic (state, payload) {
       state[payload.key] = payload.value
+    },
+
+    /* SignalR */
+    signalR (state, payload) {
+      if (payload.signalRConnectionId) {
+        state.signalRConnectionId = payload.signalRConnectionId
+      }
     },
 
     /* User */

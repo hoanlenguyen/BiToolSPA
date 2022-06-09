@@ -1,10 +1,12 @@
 <template>
   <div>
     <section class="section is-main-section">
+      <!--<b-button label="test socket" class="mr-3" type="is-primary" @click="getSignalrTestLocal()"/>
+      <span>connectionId: {{connectionId}}</span> -->
     <b-tabs v-model="activeTab">
       <b-tab-item label="Import data" type="is-boxed">
         <b-field class="file is-primary" :class="{ 'has-name': !!file }" >
-        <b-upload v-model="file" class="file-label" @change.native="isShowResult=false; fileName=file?file.name:''" 
+        <b-upload v-model="file" class="file-label" @change.native="isShowResult=false; isActiveMessage=false; fileName=file?file.name:''" 
           accept=".xlsx, .xls, .csv" required validationMessage="Please select correct file type">
           <span class="file-cta">
             <b-icon class="file-icon" icon="upload" ></b-icon>
@@ -60,22 +62,17 @@
         <b-button label="Download customer mobile list" class="mr-3" type="is-primary" @click="downloadMobileNumberListExcel"/>
       </b-field>
       </b-tab-item>
-    </b-tabs>
-
-      
+    </b-tabs> 
     </section>
   </div>
 </template>
 
 <script>
 import moment from "moment";
-import { importCustomerScore, getAdminScores, compareCustomerMobiles } from "@/api/importData";
+import { importCustomerScore, getAdminScores, compareCustomerMobiles, getSignalrTest } from "@/api/importData";
 export default {
   name: "ImportData",
   components: {},
-  created() {
-    //this.getAdminScoreList();
-  },
   data() {
     return {
       file: null,
@@ -100,6 +97,11 @@ export default {
   },
   watch: {},
   methods: {
+    // joinGame () { // triggered by a form submit
+    //     this.$socket.invoke('PlayerJoined', data.gameCode, data.playerName).then(() => {
+    //         this.$router.push(`/game/${this.gameCode}`)
+    //     })
+    // },
     getAdminScoreList() {
       getAdminScores()
         .then((response) => {
@@ -117,9 +119,10 @@ export default {
     importData() {
       this.isLoading = true;
       this.isShowResult=false;
+      this.isActiveMessage= false;
       let formData = new FormData();
       formData.append('file', this.file);
-      importCustomerScore(formData)
+      importCustomerScore({signalRConnectionId:this.$store.state.signalRConnectionId}, formData)
         .then((response) => {
           if (response.status == 200) {
             this.isShowResult = true;
@@ -219,7 +222,16 @@ export default {
         return false;
       const parsed = parseInt(input);
       return !isNaN(parsed);
+    },
+    joinGame (playerName) { 
+        this.$socket.invoke('PlayerJoined', playerName).then(() => {
+           // this.$router.push(`/game/${this.gameCode}`)
+        })
+    },
+    getSignalrTestLocal(){
+      console.log('getSignalrTestLocal');
+      getSignalrTest({signalRConnectionId: this.$store.state.signalRConnectionId});
     }
-  },
+  }
 };
 </script>

@@ -17,6 +17,7 @@ import mixin from './utils/mixin'
 
 import { getToken } from '@/utils/auth'
 
+import VueSignalR from '@latelier/vue-signalr'
 /* Fetch sample data */
 //store.dispatch('fetch', 'clients')
 
@@ -49,6 +50,7 @@ Vue.mixin(mixin)
 
 Vue.config.productionTip = false
 Vue.config.devtools = process.env.NODE_ENV === 'development'
+Vue.use(VueSignalR, `${process.env.VUE_APP_BASE_API}/gamehub`)
 
 Vue.use(Buefy)
 new Vue({

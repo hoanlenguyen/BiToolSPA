@@ -1,10 +1,11 @@
 import request from '@/utils/request'
 
-export function importCustomerScore(input) {
+export function importCustomerScore(inputParams, inputData) {
   return request({
     url: '/data/importCustomerScore',
     method: 'post',
-    data: input,
+    data: inputData,
+    params:inputParams,
     headers: {'Content-Type': 'multipart/form-data'}
     })
 }
@@ -18,7 +19,6 @@ export function compareCustomerMobiles(input) {
     })
 }
 
-
 export function getAdminScores() {
     return request({
       url: '/data/getAdminScores',
@@ -26,9 +26,17 @@ export function getAdminScores() {
     })
   }
 
-  export function getAdminCampaigns() {
-    return request({
-      url: '/data/getAdminCampaigns',
-      method: 'get'
-    })
-  }
+export function getAdminCampaigns() {
+  return request({
+    url: '/data/getAdminCampaigns',
+    method: 'get'
+  })
+}
+
+export function getSignalrTest(data) {
+  return request({
+    url: '/signalR/test',
+    method: 'get',
+    params: data
+  })
+}

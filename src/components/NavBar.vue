@@ -29,6 +29,18 @@
                 </li>
               </ul>
             </div>
+            <div class="level-item">
+              <b-message 
+                size="is-small"
+                type="is-success"
+                v-model="isActiveMessage"  
+                aria-close-label="Close message">
+                <a title="Close"  @click="isActiveMessage=false">
+                  <b-icon icon="close" size="is-small" type="is-primary"></b-icon> 
+                </a>                
+                <span v-html="importMessage.content"></span>
+              </b-message>
+            </div>
           </div>
         </div>
       </div>
@@ -112,9 +124,45 @@ export default {
       default: () => [],
     },
   },
+  created() {
+    this.$socket.start({
+      log: true // Logging is optional but very helpful during development
+    });
+
+    const that = this;
+    this.$socket.on('GetConnectionId', function (data) {
+      this.connectionId = data;
+    });
+
+    this.$socket.on('CompleteImport', function (data) {
+    });
+
+     this.$socket.on('CompleteAssignCampaign', function (data) {
+    });
+  },  
+  sockets: {
+    GetConnectionId(data){
+      this.connectionId = data;
+      this.$store.commit('signalR', {signalRConnectionId:data});
+    },
+    CompleteImport(data){
+      this.isActiveMessage=true;
+      this.importMessage = data;
+    },
+    CompleteAssignCampaign(data){
+      this.isActiveMessage=true;
+      this.importMessage = data;
+    },
+  },
   data() {
     return {
+      connectionId:null,
       isMenuActive: false,
+      isActiveMessage:false,
+      importMessage:{
+        title: null,
+        content: null
+      }
     };
   },
   computed: {
