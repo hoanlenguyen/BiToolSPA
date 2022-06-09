@@ -50,7 +50,7 @@ Vue.mixin(mixin)
 
 Vue.config.productionTip = false
 Vue.config.devtools = process.env.NODE_ENV === 'development'
-Vue.use(VueSignalR, `${process.env.VUE_APP_BASE_API}/gamehub`)
+Vue.use(VueSignalR, `${process.env.VUE_APP_BASE_API}/hubClient`)
 
 Vue.use(Buefy)
 new Vue({
