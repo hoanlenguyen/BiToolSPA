@@ -58,18 +58,21 @@
       :class="{ 'is-active': isMenuActive }"
     >    
       <div class="navbar-end">  
+      <!--<p>notificationMessages {{$store.state.notificationMessages.length}}</p>-->
       <!--<p>notificationMessages {{$store.state.notificationMessages}}</p>  -->
       <!--<p>signalRConnectionId {{$store.state.signalRConnectionId}}</p>  -->
-        <b-dropdown aria-role="list" class="mt-4" position="is-bottom-left" trap-focus expanded :max-height="250" :scrollable="true" style="min-width: 500px; text-align: right;">
+        <b-dropdown aria-role="list"  position="is-bottom-left" trap-focus expanded :max-height="250" :scrollable="true" style="min-width: 500px; text-align: right;">
           <template #trigger>
-            <a title="" @click="isActiveMessage=false">
-              <b-icon :icon="isActiveMessage? `bell-ring-outline`: `bell-outline`" :type="isActiveMessage? `is-primary`: `is-dark`"></b-icon>
-            </a>
+            <b-icon class="mt-4" :icon="unReadNotiCount? `bell-ring-outline`: `bell-outline`" :type="unReadNotiCount? `is-primary`: `is-dark`"></b-icon>
+            <span v-if="unReadNotiCount" class="mt-0 pt-0 mb-5 pb-5"><b-tag rounded type="is-primary" style="width:14px; height:14px; font-size: 10px; border-radius: 50%;" >{{unReadNotiCount}}</b-tag></span>
           </template>
-          <b-dropdown-item :expanded="true" custom :focusable="false" paddingless aria-role="listitem" v-for="message in $store.state.notificationMessages" class="py-1" style="text-align: left;">
-            <b-message size="is-small" type="is-success" class="m-0 p-0">                             
-              <span v-html="message"></span>
-            </b-message>            
+          <b-dropdown-item :expanded="true" custom :focusable="false" paddingless aria-role="listitem" v-for="(message, index) in $store.state.notificationMessages" class="py-1" style="text-align: left;">
+            <b-message size="is-small" :type="!message.isRead?`is-success`: `is-dark`" class="m-0 p-0" :style="message.isRead?`cursor: context-menu`: `cursor: pointer`" @click.native="readNotificationMessages(index)">
+              <div class="columns">
+                <div class="column is-11"><span v-html="message.content"></span></div>
+                <div class="column is-1"><b-icon v-if="!message.isRead" icon="circle-small" type="is-info" style="height: 100%;"></b-icon></div>
+              </div>                          
+            </b-message>
           </b-dropdown-item>                    
         </b-dropdown>
 
@@ -148,28 +151,32 @@ export default {
     },
     CompleteImport(data){
       console.log(data);
-      this.isActiveMessage=true;
+      //this.isActiveMessage=true;
       //this.importMessage = data;
       this.$store.commit('notificationMessages',data);
     },
     CompleteAssignCampaign(data){
-      this.isActiveMessage=true;
+      //this.isActiveMessage=true;
       //this.importMessage = data;
       this.$store.commit('notificationMessages', data);
     }
   },
   data() {
     return {
-      connectionId:null,
+      //connectionId:null,
       isMenuActive: false,
-      isActiveMessage:false,
-      importMessage:{
-        title: null,
-        content: null
-      }
+      //isActiveMessage:false,
+      // importMessage:{
+      //   title: null,
+      //   content: null
+      // }
     };
   },
   computed: {
+    unReadNotiCount(){
+      if(this.$store.state.notificationMessages.length==0) return 0;
+      return this.$store.state.notificationMessages.filter(p=>p.isRead!==true).length;
+    },
     asideMobileIcon() {
       return this.isAsideMobileExpanded ? "backburger" : "forwardburger";
     },
@@ -184,6 +191,10 @@ export default {
     });
   },
   methods: {
+    readNotificationMessages(index){
+      console.log('index' + index);
+      this.$store.commit("readNotificationMessages", index);
+    },
     asideToggleMobile() {
       this.$store.commit("asideMobileStateToggle");
     },

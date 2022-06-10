@@ -54,10 +54,15 @@ const store = new Vuex.Store({
     /* notificationMessages */
     notificationMessages (state, payload) {
       if (payload.content) {
-        state.notificationMessages.unshift(payload.content)
+        state.notificationMessages.unshift({content:payload.content, isRead:false})
       }
     },
 
+    readNotificationMessages (state, payload) {
+      if (!isNaN(payload)) {
+        state.notificationMessages[payload].isRead=true;
+      }
+    },
     clearNotificationMessages(state, payload=null) {
       state.notificationMessages=[]
     },
