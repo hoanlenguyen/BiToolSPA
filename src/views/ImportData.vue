@@ -122,6 +122,7 @@ export default {
       this.isActiveMessage= false;
       let formData = new FormData();
       formData.append('file', this.file);
+      console.log(this.$store.state.signalRConnectionId);
       importCustomerScore({signalRConnectionId:this.$store.state.signalRConnectionId}, formData)
         .then((response) => {
           if (response.status == 200) {

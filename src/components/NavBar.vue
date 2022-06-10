@@ -29,7 +29,7 @@
                 </li>
               </ul>
             </div>
-            <div class="level-item">
+            <!--  <div class="level-item">
               <b-message 
                 size="is-small"
                 type="is-success"
@@ -40,12 +40,12 @@
                 </a>                
                 <span v-html="importMessage.content"></span>
               </b-message>
-            </div>
+            </div> -->
           </div>
         </div>
       </div>
     </div>
-    <div class="navbar-brand is-right">
+    <div class="navbar-brand is-right"></div>
       <a
         class="navbar-item navbar-item-menu-toggle is-hidden-desktop"
         @click.prevent="menuToggle"
@@ -57,7 +57,22 @@
       class="navbar-menu fadeIn animated faster"
       :class="{ 'is-active': isMenuActive }"
     >    
-      <div class="navbar-end">        
+      <div class="navbar-end">  
+      <!--<p>notificationMessages {{$store.state.notificationMessages}}</p>  -->
+      <!--<p>signalRConnectionId {{$store.state.signalRConnectionId}}</p>  -->
+        <b-dropdown aria-role="list" class="mt-4" position="is-bottom-left" trap-focus expanded :max-height="250" :scrollable="true" style="min-width: 500px; text-align: right;">
+          <template #trigger>
+            <a title="" @click="isActiveMessage=false">
+              <b-icon :icon="isActiveMessage? `bell-ring-outline`: `bell-outline`" :type="isActiveMessage? `is-primary`: `is-dark`"></b-icon>
+            </a>
+          </template>
+          <b-dropdown-item :expanded="true" custom :focusable="false" paddingless aria-role="listitem" v-for="message in $store.state.notificationMessages" class="py-1" style="text-align: left;">
+            <b-message size="is-small" type="is-success" class="m-0 p-0">                             
+              <span v-html="message"></span>
+            </b-message>            
+          </b-dropdown-item>                    
+        </b-dropdown>
+
         <nav-bar-menu class="has-divider has-user-avatar">
           <span class="mr-2">Hi,</span>
           <div class="is-user-name">
@@ -71,20 +86,7 @@
             >
               <b-icon icon="account" custom-size="default" />
               <span>My Profile</span>
-            </router-link>
-            <!--  <a class="navbar-item">
-              <b-icon icon="settings" custom-size="default" />
-              <span>Settings</span>
-            </a>
-            <a class="navbar-item">
-              <b-icon icon="email" custom-size="default" />
-              <span>Messages</span>
-            </a>
-            <hr class="navbar-divider" />
-            <a class="navbar-item">
-              <b-icon icon="logout" custom-size="default" />
-              <span>Log Out</span>
-            </a> -->
+            </router-link>           
           </div> 
         </nav-bar-menu>
         <router-link
@@ -131,28 +133,30 @@ export default {
 
     const that = this;
     this.$socket.on('GetConnectionId', function (data) {
-      this.connectionId = data;
     });
-
-    this.$socket.on('CompleteImport', function (data) {
+    this.$socket.on('CompleteImport', function (data) {     
     });
-
-     this.$socket.on('CompleteAssignCampaign', function (data) {
+    this.$socket.on('CompleteAssignCampaign', function (data) {
     });
+    if(!this.$store.state.signalRConnectionId)
+      this.$socket.invoke('GetCurrentConnectionId').then((data) => {console.log('invoke'+ data);})
   },  
   sockets: {
     GetConnectionId(data){
-      this.connectionId = data;
-      this.$store.commit('signalR', {signalRConnectionId:data});
+      //this.connectionId = data;
+      this.$store.commit('signalR', data);
     },
     CompleteImport(data){
+      console.log(data);
       this.isActiveMessage=true;
-      this.importMessage = data;
+      //this.importMessage = data;
+      this.$store.commit('notificationMessages',data);
     },
     CompleteAssignCampaign(data){
       this.isActiveMessage=true;
-      this.importMessage = data;
-    },
+      //this.importMessage = data;
+      this.$store.commit('notificationMessages', data);
+    }
   },
   data() {
     return {
@@ -193,6 +197,8 @@ export default {
       setToken('');
       sessionStorage.clear();
       this.$store.commit('user',  {});
+      this.$store.commit('clearNotificationMessages');
+      this.$store.commit('clearSignalRConnectionId');
       this.$router.push({ name: 'login' });
     },
   },

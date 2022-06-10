@@ -26,6 +26,8 @@ const store = new Vuex.Store({
     /* signalR */
     signalRConnectionId:null,
 
+    notificationMessages:[],
+
     /* Sample data (commonly used) */
     clients: []
   },
@@ -44,9 +46,24 @@ const store = new Vuex.Store({
 
     /* SignalR */
     signalR (state, payload) {
-      if (payload.signalRConnectionId) {
-        state.signalRConnectionId = payload.signalRConnectionId
+      if (payload) {
+        state.signalRConnectionId = payload
       }
+    },
+
+    /* notificationMessages */
+    notificationMessages (state, payload) {
+      if (payload.content) {
+        state.notificationMessages.unshift(payload.content)
+      }
+    },
+
+    clearNotificationMessages(state, payload=null) {
+      state.notificationMessages=[]
+    },
+
+    clearSignalRConnectionId(state, payload=null) {
+      state.signalRConnectionId=null;
     },
 
     /* User */
@@ -125,7 +142,10 @@ const store = new Vuex.Store({
         .catch(error => {
           alert(error.message)
         })
-    }
+    },
+    clearNotificationMessages (state, payload=null) {       
+        state.notificationMessages=[]
+    }    
   }
 })
 
