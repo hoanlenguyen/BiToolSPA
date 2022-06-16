@@ -25,6 +25,14 @@ const routes = [
   },
   {
     meta: {
+      title: 'Import data history'
+    },
+    path: '/import-history',
+    name: 'import-history',    
+    component: () => import('@/views/ImportHistory.vue')
+  },
+  {
+    meta: {
       title: 'Export data'
     },
     path: '/export-data',

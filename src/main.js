@@ -15,6 +15,10 @@ import App from './App.vue'
 /* add mixin */
 import mixin from './utils/mixin'
 
+/* add filter */
+import './utils/filter';
+
+
 import { getToken } from '@/utils/auth'
 
 import VueSignalR from '@latelier/vue-signalr'

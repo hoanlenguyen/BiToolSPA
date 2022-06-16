@@ -1,8 +1,6 @@
 <template>
   <div>
-    <section class="section is-main-section">
-      <!--<b-button label="test socket" class="mr-3" type="is-primary" @click="getSignalrTestLocal()"/>
-      <span>connectionId: {{connectionId}}</span> -->
+    <section class="section is-main-section">      
     <b-tabs v-model="activeTab">
       <b-tab-item label="Import data" type="is-boxed">
         <b-field class="file is-primary" :class="{ 'has-name': !!file }" >
@@ -68,8 +66,8 @@
 </template>
 
 <script>
-import moment from "moment";
-import { importCustomerScore, getAdminScores, compareCustomerMobiles, getSignalrTest } from "@/api/importData";
+//import moment from "moment";
+import { importCustomerScore, getAdminScores, compareCustomerMobiles } from "@/api/importData";
 export default {
   name: "ImportData",
   components: {},
@@ -228,11 +226,7 @@ export default {
         this.$socket.invoke('PlayerJoined', playerName).then(() => {
            // this.$router.push(`/game/${this.gameCode}`)
         })
-    },
-    getSignalrTestLocal(){
-      console.log('getSignalrTestLocal');
-      getSignalrTest({signalRConnectionId: this.$store.state.signalRConnectionId});
     }
-  }
+    }
 };
 </script>
