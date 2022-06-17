@@ -11,8 +11,8 @@
       pagination-position="bottom"
       
       backend-sorting
-      default-sort="ID"
-      default-sort-direction="desc"
+      :default-sort="filter.sortBy"
+      :default-sort-direction="filter.sortDirection"
       :sort-icon="sortIcon"
       :sort-icon-size="sortIconSize"
       @sort="onSort"
@@ -25,20 +25,11 @@
       :debounce-page-input="200"
     >
       <b-table-column
-        field="id"
-        label="ID"
-        width="40"
-        numeric
-        v-slot="props"
-      >
-        {{ props.row.id }}
-      </b-table-column>
-
-      <b-table-column
         field="ImportTime"
         label="Import Time"
         sortable        
         searchable
+        width="350px"
       >
       <template #searchable="props">
        <b-field>
@@ -73,9 +64,10 @@
         field="Source"
         label="Source"
         searchable 
-        sortable>
+        sortable
+        width="300px">
         <template #searchable="props">
-          <b-input
+        <!--  <b-input
             lazy
             icon-right-clickable
             :maxlength="50"
@@ -85,7 +77,21 @@
             @keyup.native.enter="onChangePageSize"
             placeholder="Search..."
             icon-right="magnify"
-            size="is-small" />
+            size="is-small" /> -->
+
+            <b-autocomplete
+              open-on-focus
+              v-model="searchSource"
+              :data="filteredDataArray"
+              placeholder="Search..."
+              icon-right="magnify"                
+              @keyup.native.enter="onChangePageSize"
+              @input="onSelectSource"
+              clearable
+              size="is-small"              
+              @select="option => selected = option">
+              <template #empty>No sources found</template>
+            </b-autocomplete>
         </template>
         <template v-slot="props">{{ props.row.source }}</template>        
       </b-table-column>
@@ -95,7 +101,7 @@
         label="File Name"
         sortable
         v-slot="props"
-      >
+        width="400px">
         {{props.row.fileName}}
       </b-table-column>
 
@@ -106,23 +112,20 @@
       >
         {{props.row.totalRows}}
       </b-table-column>
-      <div slot="footer" class="columns" >
-        <div class="column">
-          <b-button
+      <div slot="footer" class="is-flex 
+        is-flex-direction-row
+        is-align-items-center
+        is-flex-wrap-wrap">
+         <b-button
             label="Reset"
             type="is-light"
-            class="mr-3"
+            class="mr-4"
             icon-left="reload"
             @click="resetFilter"
           />
-        </div>
-        <div class="column is-2">
-          <b-select v-model="filter.rowsPerPage"  @input="onChangePageSize" class="is-align-self-flex-end">
+         <b-select v-model="filter.rowsPerPage"  @input="onChangePageSize" class="mr-4">
             <option v-for="i in pageOptions" :value="i" :key="i">{{`${i} per page`}}</option>        
           </b-select>
-        </b-select>
-      </div>
-        <div class="column is-4">
         <b-pagination
             :total="totalItems"
             v-model="filter.page"
@@ -142,19 +145,18 @@
             :page-input="true"
             :page-input-position="``"
             :debounce-page-input="``"
-            @change="onChangePageNumber"
-            >
+            @change="onChangePageNumber">
         </b-pagination>
         </div>
-      </div>
     </b-table>
   </section>
 </template>
 <script>
 import moment from "moment";
-import { getPagingImportHistories, getResource  } from "@/api/importHistory";
+import { getPagingImportHistories, getSource  } from "@/api/importHistory";
 export default {
   created() {
+    this.getSource();
     this.getImportHistories();
   },
   data() {
@@ -173,12 +175,14 @@ export default {
       paginationOrder: "is-right",
       inputPosition: "is-input-left",
       inputDebounce: "",
-      pageOptions:[10,15,20,50],
+      pageOptions:[20,50,100],
       importTimeFrom:null,
       importTimeTo:null,
+      sources:[],
+      searchSource:null,
       filter:{
         page:1,
-        rowsPerPage:10,
+        rowsPerPage:20,
         sortBy:'ImportTime',
         sortDirection:'desc',
         importTimeFrom:null,
@@ -187,7 +191,7 @@ export default {
       },
       defaultFilter:{
         page:1,
-        rowsPerPage:10,
+        rowsPerPage:20,
         sortBy:'ImportTime',
         sortDirection:'desc',
         importTimeFrom:null,
@@ -197,11 +201,23 @@ export default {
     };
   },
   watch: {},
+  computed: {
+    filteredDataArray() {
+      if(!this.searchSource) return this.sources;
+      return this.sources.filter((option) => {
+          return option
+              .toString()
+              .toLowerCase()
+              .indexOf(this.searchSource.toLowerCase()) >= 0
+      })
+    }
+  },
   methods: {
     resetFilter() {
       this.filter = { ...this.defaultFilter };
-      this.importTimeFrom=null;
-      this.importTimeTo=null;
+      this.importTimeFrom = null;
+      this.importTimeTo = null;
+      this.searchSource = null; 
       this.getImportHistories();
     },
     onChangePageSize(){
@@ -219,6 +235,21 @@ export default {
       this.filter.sortBy = field
       this.filter.sortDirection = order
       this.getImportHistories()
+    },
+    onSelectSource(input){
+      if(input!=null && input.length==0) {
+        this.filter.source = null;
+        this.filter.page = 1;
+        this.getImportHistories();
+      }else{
+        var searchSource = input.toLowerCase();
+        var findIndex = this.sources.findIndex(p=>p.toLowerCase()==searchSource);
+        if(findIndex>=0){
+          this.filter.source = input;
+          this.filter.page = 1;
+          this.getImportHistories();
+        }
+      }            
     },
     getImportHistories() {
       this.isLoading = true;
@@ -243,6 +274,20 @@ export default {
         })
         .finally(() => {
           this.isLoading = false;
+        });
+    },
+    getSource() {
+      getSource()
+        .then((response) => {
+          if (response.status == 200) {
+            this.sources = response.data;
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+        })
+        .finally(() => {
+          //this.isLoading = false;
         });
     },
   }

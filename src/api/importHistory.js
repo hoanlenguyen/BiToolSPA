@@ -8,9 +8,9 @@ export function getPagingImportHistories(input) {
   })
 }
 
-export function getResource() {
+export function getSource() {
   return request({
-    url: '/importHistory/getResource',
+    url: '/importHistory/getSource',
     method: 'get'
   })
 }

@@ -32,7 +32,7 @@
       </b-field>
       </b-tab-item>
 
-      <b-tab-item label="Check customer mobile No." type="is-boxed">
+      <b-tab-item label="Cleaning data" type="is-boxed">
         <b-field class="file is-primary" :class="{ 'has-name': !!fileTab2 }" >
         <b-upload v-model="fileTab2" class="file-label" @change.native="isShowResultTab2=false; fileNameTab2=fileTab2?fileTab2.name:''" 
           accept=".xlsx, .xls, .csv" required validationMessage="Please select correct file type">
@@ -95,11 +95,6 @@ export default {
   },
   watch: {},
   methods: {
-    // joinGame () { // triggered by a form submit
-    //     this.$socket.invoke('PlayerJoined', data.gameCode, data.playerName).then(() => {
-    //         this.$router.push(`/game/${this.gameCode}`)
-    //     })
-    // },
     getAdminScoreList() {
       getAdminScores()
         .then((response) => {
@@ -221,12 +216,7 @@ export default {
         return false;
       const parsed = parseInt(input);
       return !isNaN(parsed);
-    },
-    joinGame (playerName) { 
-        this.$socket.invoke('PlayerJoined', playerName).then(() => {
-           // this.$router.push(`/game/${this.gameCode}`)
-        })
     }
-    }
+  }
 };
 </script>
