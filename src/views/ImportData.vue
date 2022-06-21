@@ -46,7 +46,7 @@
         </b-upload>
       </b-field>
       <b-field class="mt-5">
-        <b-button type="is-info" @click="compareCustomerMobiles" :loading="isLoadingTab2" :disabled="!fileTab2" label="Check customer mobile No." 
+        <b-button type="is-info" @click="compareCustomerMobiles" :loading="isLoadingTab2" :disabled="!fileTab2" label="Clean data" 
           icon-left="database-import"/>
       </b-field>
       <b-field class="mt-5" v-show="isShowResultTab2">
