@@ -25,8 +25,8 @@
       :debounce-page-input="200"
     >
       <b-table-column
-        field="ImportTime"
-        label="Import Time"
+        field="CleanTime"
+        label="Clean Time"
         sortable        
         searchable
         width="350px"
