@@ -37,7 +37,7 @@
             <b-datepicker
               icon="calendar-today"
               locale="en-CA"
-              v-model="importTimeFrom"
+              v-model="cleanTimeFrom"
               editable
               size="is-small"
               placeholder="from"
@@ -48,7 +48,7 @@
             <b-datepicker
               icon="calendar-today"
               locale="en-CA"
-              v-model="importTimeTo"
+              v-model="cleanTimeTo"
               editable
               size="is-small"
               placeholder="to"
@@ -57,7 +57,7 @@
           </p>
         </b-field>
       </template>
-      <template v-slot="props">{{ props.row.importTime | dateTime }}</template>
+      <template v-slot="props">{{ props.row.cleanTime | dateTime }}</template>
       </b-table-column>
 
       <b-table-column
@@ -66,7 +66,19 @@
         searchable 
         sortable
         width="300px">
-        <template #searchable="props">        
+        <template #searchable="props">
+        <!--  <b-input
+            lazy
+            icon-right-clickable
+            :maxlength="50"
+            :has-counter="false"
+            v-model="filter.source"
+            @icon-right-click="onChangePageSize"
+            @keyup.native.enter="onChangePageSize"
+            placeholder="Search..."
+            icon-right="magnify"
+            size="is-small" /> -->
+
             <b-autocomplete
               open-on-focus
               v-model="searchSource"
@@ -97,14 +109,43 @@
         field="TotalRows"
         label="Number of data"
         v-slot="props"
+        width="200px"
       >
         {{props.row.totalRows}}
       </b-table-column>
+
+      <b-table-column
+        field="TotalInvalidNumbers"
+        label="Total invalid numbers"
+        v-slot="props"
+        width="200px"
+      >
+       <span>{{props.row.totalInvalidNumbers}}</span> <span v-if="props.row.totalRows>0">({{props.row.totalInvalidNumbers/props.row.totalRows*100 |roundNumber}} %)</span>
+      </b-table-column>
+
+      <b-table-column
+        field="TotalDuplicateNumbersInFile"
+        label="Total duplicate numbers in file"
+        v-slot="props"
+        width="200px"
+      >
+       <span>{{props.row.totalDuplicateNumbersInFile}}</span> <span v-if="props.row.totalRows>0">({{props.row.totalDuplicateNumbersInFile/props.row.totalRows*100|roundNumber}} %)</span>
+      </b-table-column>
+
+      <b-table-column
+        field="TotalDuplicateNumbersWithSystem"
+        label="Total duplicate numbers with system"
+        v-slot="props"
+        width="200px"
+      >
+       <span>{{props.row.totalDuplicateNumbersWithSystem}}</span> <span v-if="props.row.totalRows>0">({{props.row.totalDuplicateNumbersWithSystem/props.row.totalRows*100|roundNumber}} %)</span>
+      </b-table-column>
+      
       <div slot="footer" class="is-flex 
         is-flex-direction-row
         is-align-items-center
         is-flex-wrap-wrap">
-        <b-button
+         <b-button
             label="Reset"
             type="is-light"
             class="mr-4"
@@ -142,9 +183,9 @@
 </template>
 <script>
 import moment from "moment";
-import { getPagingImportHistories, getSource  } from "@/api/importHistory";
+import { getPaging, getSource  } from "@/api/cleanDataHistory";
 export default {
-  name:"ImportHistory",
+  name: "CleanDataHistory",
   created() {
     this.getSource();
     this.getImportHistories();
@@ -166,26 +207,26 @@ export default {
       inputPosition: "is-input-left",
       inputDebounce: "",
       pageOptions:[20,50,100],
-      importTimeFrom:null,
-      importTimeTo:null,
+      cleanTimeFrom:null,
+      cleanTimeTo:null,
       sources:[],
       searchSource:null,
       filter:{
         page:1,
         rowsPerPage:20,
-        sortBy:'ImportTime',
+        sortBy:'CleanTime',
         sortDirection:'desc',
-        importTimeFrom:null,
-        importTimeTo:null,
+        cleanTimeFrom:null,
+        cleanTimeTo:null,
         source: null
       },
       defaultFilter:{
         page:1,
         rowsPerPage:20,
-        sortBy:'ImportTime',
+        sortBy:'CleanTime',
         sortDirection:'desc',
-        importTimeFrom:null,
-        importTimeTo:null,
+        cleanTimeFrom:null,
+        cleanTimeTo:null,
         source: null
       }
     };
@@ -205,8 +246,8 @@ export default {
   methods: {
     resetFilter() {
       this.filter = { ...this.defaultFilter };
-      this.importTimeFrom = null;
-      this.importTimeTo = null;
+      this.cleanTimeFrom = null;
+      this.cleanTimeTo = null;
       this.searchSource = null; 
       this.getImportHistories();
     },
@@ -244,11 +285,11 @@ export default {
     getImportHistories() {
       this.isLoading = true;
       const outputFormat = "YYYY-MM-DD";
-      this.filter.importTimeFrom =this.importTimeFrom? moment(this.importTimeFrom).format(outputFormat):null;
-      this.filter.importTimeTo =this.importTimeTo? moment(this.importTimeTo).format(outputFormat):null;
+      this.filter.cleanTimeFrom =this.cleanTimeFrom? moment(this.cleanTimeFrom).format(outputFormat):null;
+      this.filter.cleanTimeTo =this.cleanTimeTo? moment(this.cleanTimeTo).format(outputFormat):null;
       if(!this.filter.source) this.filter.source=null;
 
-      getPagingImportHistories(this.filter)
+      getPaging(this.filter)
         .then((response) => {
           if (response.status == 200 && response.data) {
             const result =  response.data;

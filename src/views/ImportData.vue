@@ -202,10 +202,10 @@ export default {
     downloadMobileNumberListExcel() {
       console.log("downloadMobileNumberListExcel");
       if (this.mobileNumberList.length > 0) {
-        let mobileList = this.mobileNumberList.map((p) => ({
-          CustomerMobileNo: p,
-        }));
-        this.exportExcelData(mobileList, "CustomerMobileNoList", 30, false);
+        // let mobileList = this.mobileNumberList.map((p) => ({
+        //   CustomerMobileNo: p,
+        // }));
+        this.exportExcelData(this.mobileNumberList, "CustomerMobileNoList", 30, false);
       }
     },
     checkValidPhoneNumber(input) {

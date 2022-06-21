@@ -33,6 +33,14 @@ const routes = [
   },
   {
     meta: {
+      title: 'Clean data history'
+    },
+    path: '/clean-history',
+    name: 'clean-history',    
+    component: () => import('@/views/CleanDataHistory.vue')
+  },
+  {
+    meta: {
       title: 'Export data'
     },
     path: '/export-data',

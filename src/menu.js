@@ -26,6 +26,11 @@ export default [
       icon: 'calendar-clock',
       // updateMark: true
     },
+    {
+      to: '/clean-history',
+      label: 'Clean data history',
+      icon: 'calendar-clock'
+    },
     // {
     //   label: 'Submenus',
     //   subLabel: 'Submenus Example',
