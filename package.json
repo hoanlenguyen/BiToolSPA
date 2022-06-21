@@ -11,6 +11,8 @@
     "build:vite": "vite build"
   },
   "dependencies": {
+    "@babel/runtime": "7.0.0-beta.55",
+    "@latelier/vue-signalr": "^2.0.4",
     "axios": "^0.26.0",
     "buefy": "^0.9.13",
     "bulma": "^0.9.3",
@@ -36,7 +38,9 @@
     "@vue/cli-plugin-vuex": "^5.0.4",
     "@vue/cli-service": "^5.0.4",
     "@vue/eslint-config-standard": "^6.1.0",
+    "babel-cli": "^6.26.0",
     "babel-eslint": "^10.1.0",
+    "babel-plugin-transform-runtime": "^6.23.0",
     "eslint": "^7.32.0",
     "eslint-plugin-import": "^2.22.1",
     "eslint-plugin-node": "^11.1.0",

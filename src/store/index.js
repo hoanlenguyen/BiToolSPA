@@ -23,6 +23,11 @@ const store = new Vuex.Store({
     isAsideVisible: true,
     isAsideMobileExpanded: false,
 
+    /* signalR */
+    signalRConnectionId:null,
+
+    notificationMessages:[],
+
     /* Sample data (commonly used) */
     clients: []
   },
@@ -37,6 +42,33 @@ const store = new Vuex.Store({
     /* A fit-them-all commit */
     basic (state, payload) {
       state[payload.key] = payload.value
+    },
+
+    /* SignalR */
+    signalR (state, payload) {
+      if (payload) {
+        state.signalRConnectionId = payload
+      }
+    },
+
+    /* notificationMessages */
+    notificationMessages (state, payload) {
+      if (payload.content) {
+        state.notificationMessages.unshift({content:payload.content, isRead:false})
+      }
+    },
+
+    readNotificationMessages (state, payload) {
+      if (!isNaN(payload)) {
+        state.notificationMessages[payload].isRead=true;
+      }
+    },
+    clearNotificationMessages(state, payload=null) {
+      state.notificationMessages=[]
+    },
+
+    clearSignalRConnectionId(state, payload=null) {
+      state.signalRConnectionId=null;
     },
 
     /* User */
@@ -115,7 +147,10 @@ const store = new Vuex.Store({
         .catch(error => {
           alert(error.message)
         })
-    }
+    },
+    clearNotificationMessages (state, payload=null) {       
+        state.notificationMessages=[]
+    }    
   }
 })
 

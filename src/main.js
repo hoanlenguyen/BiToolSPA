@@ -15,8 +15,13 @@ import App from './App.vue'
 /* add mixin */
 import mixin from './utils/mixin'
 
+/* add filter */
+import './utils/filter';
+
+
 import { getToken } from '@/utils/auth'
 
+import VueSignalR from '@latelier/vue-signalr'
 /* Fetch sample data */
 //store.dispatch('fetch', 'clients')
 
@@ -49,6 +54,7 @@ Vue.mixin(mixin)
 
 Vue.config.productionTip = false
 Vue.config.devtools = process.env.NODE_ENV === 'development'
+Vue.use(VueSignalR, `${process.env.VUE_APP_BASE_API}/hubClient`)
 
 Vue.use(Buefy)
 new Vue({

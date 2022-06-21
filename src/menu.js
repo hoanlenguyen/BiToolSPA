@@ -14,12 +14,23 @@ export default [
       label: 'Import data',
       icon: 'database-import',
       // updateMark: true
-    },
+    },   
     {
       to: '/export-data',
       label: 'Export data',
       icon: 'database-export'
-    }
+    },
+    {
+      to: '/import-history',
+      label: 'Import history',
+      icon: 'calendar-clock',
+      // updateMark: true
+    },
+    {
+      to: '/clean-history',
+      label: 'Clean data history',
+      icon: 'calendar-clock'
+    },
     // {
     //   label: 'Submenus',
     //   subLabel: 'Submenus Example',

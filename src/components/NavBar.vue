@@ -29,11 +29,23 @@
                 </li>
               </ul>
             </div>
+            <!--  <div class="level-item">
+              <b-message 
+                size="is-small"
+                type="is-success"
+                v-model="isActiveMessage"  
+                aria-close-label="Close message">
+                <a title="Close"  @click="isActiveMessage=false">
+                  <b-icon icon="close" size="is-small" type="is-primary"></b-icon> 
+                </a>                
+                <span v-html="importMessage.content"></span>
+              </b-message>
+            </div> -->
           </div>
         </div>
       </div>
     </div>
-    <div class="navbar-brand is-right">
+    <div class="navbar-brand is-right"></div>
       <a
         class="navbar-item navbar-item-menu-toggle is-hidden-desktop"
         @click.prevent="menuToggle"
@@ -45,7 +57,25 @@
       class="navbar-menu fadeIn animated faster"
       :class="{ 'is-active': isMenuActive }"
     >    
-      <div class="navbar-end">        
+      <div class="navbar-end">  
+      <!--<p>notificationMessages {{$store.state.notificationMessages.length}}</p>-->
+      <!--<p>notificationMessages {{$store.state.notificationMessages}}</p>  -->
+      <!--<p>signalRConnectionId {{$store.state.signalRConnectionId}}</p>  -->
+        <b-dropdown aria-role="list"  position="is-bottom-left" trap-focus expanded :max-height="250" :scrollable="true" style="min-width: 500px; text-align: right;">
+          <template #trigger>
+            <b-icon class="mt-4" :icon="unReadNotiCount? `bell-ring-outline`: `bell-outline`" :type="unReadNotiCount? `is-primary`: `is-dark`"></b-icon>
+            <span v-if="unReadNotiCount" class="mt-0 pt-0 mb-5 pb-5"><b-tag rounded type="is-primary" style="width:14px; height:14px; font-size: 10px; border-radius: 50%;" >{{unReadNotiCount}}</b-tag></span>
+          </template>
+          <b-dropdown-item :expanded="true" custom :focusable="false" paddingless aria-role="listitem" v-for="(message, index) in $store.state.notificationMessages" class="py-1" style="text-align: left;">
+            <b-message size="is-small" :type="!message.isRead?`is-success`: `is-dark`" class="m-0 p-0" :style="message.isRead?`cursor: context-menu`: `cursor: pointer`" @click.native="readNotificationMessages(index)">
+              <div class="columns">
+                <div class="column is-11"><span v-html="message.content"></span></div>
+                <div class="column is-1"><b-icon v-if="!message.isRead" icon="circle-small" type="is-info" style="height: 100%;"></b-icon></div>
+              </div>                          
+            </b-message>
+          </b-dropdown-item>                    
+        </b-dropdown>
+
         <nav-bar-menu class="has-divider has-user-avatar">
           <span class="mr-2">Hi,</span>
           <div class="is-user-name">
@@ -59,20 +89,7 @@
             >
               <b-icon icon="account" custom-size="default" />
               <span>My Profile</span>
-            </router-link>
-            <!--  <a class="navbar-item">
-              <b-icon icon="settings" custom-size="default" />
-              <span>Settings</span>
-            </a>
-            <a class="navbar-item">
-              <b-icon icon="email" custom-size="default" />
-              <span>Messages</span>
-            </a>
-            <hr class="navbar-divider" />
-            <a class="navbar-item">
-              <b-icon icon="logout" custom-size="default" />
-              <span>Log Out</span>
-            </a> -->
+            </router-link>           
           </div> 
         </nav-bar-menu>
         <router-link
@@ -112,12 +129,54 @@ export default {
       default: () => [],
     },
   },
+  created() {
+    this.$socket.start({
+      log: true // Logging is optional but very helpful during development
+    });
+
+    const that = this;
+    this.$socket.on('GetConnectionId', function (data) {
+    });
+    this.$socket.on('CompleteImport', function (data) {     
+    });
+    this.$socket.on('CompleteAssignCampaign', function (data) {
+    });
+    if(!this.$store.state.signalRConnectionId)
+      this.$socket.invoke('GetCurrentConnectionId').then((data) => {console.log('invoke'+ data);})
+  },  
+  sockets: {
+    GetConnectionId(data){
+      //this.connectionId = data;
+      this.$store.commit('signalR', data);
+    },
+    CompleteImport(data){
+      console.log(data);
+      //this.isActiveMessage=true;
+      //this.importMessage = data;
+      this.$store.commit('notificationMessages',data);
+    },
+    CompleteAssignCampaign(data){
+      //this.isActiveMessage=true;
+      //this.importMessage = data;
+      this.$store.commit('notificationMessages', data);
+    }
+  },
   data() {
     return {
+      //connectionId:null,
       isMenuActive: false,
+      //isActiveMessage:false,
+      // importMessage:{
+      //   title: null,
+      //   content: null
+      // }
     };
   },
   computed: {
+    unReadNotiCount(){
+      if(this.$store.state.notificationMessages.length==0) return 0;
+      return this.$store.state.notificationMessages.filter(p=>p.isRead!==true).length;
+    },
     asideMobileIcon() {
       return this.isAsideMobileExpanded ? "backburger" : "forwardburger";
     },
@@ -132,6 +191,10 @@ export default {
     });
   },
   methods: {
+    readNotificationMessages(index){
+      console.log('index' + index);
+      this.$store.commit("readNotificationMessages", index);
+    },
     asideToggleMobile() {
       this.$store.commit("asideMobileStateToggle");
     },
@@ -145,6 +208,8 @@ export default {
       setToken('');
       sessionStorage.clear();
       this.$store.commit('user',  {});
+      this.$store.commit('clearNotificationMessages');
+      this.$store.commit('clearSignalRConnectionId');
       this.$router.push({ name: 'login' });
     },
   },

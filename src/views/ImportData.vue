@@ -1,10 +1,10 @@
 <template>
   <div>
-    <section class="section is-main-section">
+    <section class="section is-main-section">      
     <b-tabs v-model="activeTab">
       <b-tab-item label="Import data" type="is-boxed">
         <b-field class="file is-primary" :class="{ 'has-name': !!file }" >
-        <b-upload v-model="file" class="file-label" @change.native="isShowResult=false; fileName=file?file.name:''" 
+        <b-upload v-model="file" class="file-label" @change.native="isShowResult=false; isActiveMessage=false; fileName=file?file.name:''" 
           accept=".xlsx, .xls, .csv" required validationMessage="Please select correct file type">
           <span class="file-cta">
             <b-icon class="file-icon" icon="upload" ></b-icon>
@@ -32,7 +32,7 @@
       </b-field>
       </b-tab-item>
 
-      <b-tab-item label="Check customer mobile No." type="is-boxed">
+      <b-tab-item label="Cleaning data" type="is-boxed">
         <b-field class="file is-primary" :class="{ 'has-name': !!fileTab2 }" >
         <b-upload v-model="fileTab2" class="file-label" @change.native="isShowResultTab2=false; fileNameTab2=fileTab2?fileTab2.name:''" 
           accept=".xlsx, .xls, .csv" required validationMessage="Please select correct file type">
@@ -60,22 +60,17 @@
         <b-button label="Download customer mobile list" class="mr-3" type="is-primary" @click="downloadMobileNumberListExcel"/>
       </b-field>
       </b-tab-item>
-    </b-tabs>
-
-      
+    </b-tabs> 
     </section>
   </div>
 </template>
 
 <script>
-import moment from "moment";
+//import moment from "moment";
 import { importCustomerScore, getAdminScores, compareCustomerMobiles } from "@/api/importData";
 export default {
   name: "ImportData",
   components: {},
-  created() {
-    //this.getAdminScoreList();
-  },
   data() {
     return {
       file: null,
@@ -117,9 +112,11 @@ export default {
     importData() {
       this.isLoading = true;
       this.isShowResult=false;
+      this.isActiveMessage= false;
       let formData = new FormData();
       formData.append('file', this.file);
-      importCustomerScore(formData)
+      console.log(this.$store.state.signalRConnectionId);
+      importCustomerScore({signalRConnectionId:this.$store.state.signalRConnectionId}, formData)
         .then((response) => {
           if (response.status == 200) {
             this.isShowResult = true;
@@ -205,10 +202,10 @@ export default {
     downloadMobileNumberListExcel() {
       console.log("downloadMobileNumberListExcel");
       if (this.mobileNumberList.length > 0) {
-        let mobileList = this.mobileNumberList.map((p) => ({
-          CustomerMobileNo: p,
-        }));
-        this.exportExcelData(mobileList, "CustomerMobileNoList", 30, false);
+        // let mobileList = this.mobileNumberList.map((p) => ({
+        //   CustomerMobileNo: p,
+        // }));
+        this.exportExcelData(this.mobileNumberList, "CustomerMobileNoList", 30, false);
       }
     },
     checkValidPhoneNumber(input) {
@@ -220,6 +217,6 @@ export default {
       const parsed = parseInt(input);
       return !isNaN(parsed);
     }
-  },
+  }
 };
 </script>

@@ -690,6 +690,7 @@ export default {
     },
     assignCampaignToCustomers() {
       this.isConfirmingCampaign = true;
+      this.filter.signalRConnectionId= this.$store.state.signalRConnectionId;
       assignCampaignToCustomers(this.filter)
         .then((response) => {
           if (response.status == 200) {
