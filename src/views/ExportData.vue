@@ -523,6 +523,8 @@ export default {
       this.customerList = [];
       this.dateFirstAddedFrom = null;
       this.dateFirstAddedTo = null;
+      this.dateLastExportedFrom = null;
+      this.dateLastExportedTo = null;
       this.isShowResult = false;
       this.isShowCampaign = false;
       this.selectLast3CampaignsUsed=[];
