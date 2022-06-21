@@ -141,6 +141,9 @@
        <span>{{props.row.totalDuplicateNumbersWithSystem}}</span> <span v-if="props.row.totalRows>0">({{props.row.totalDuplicateNumbersWithSystem/props.row.totalRows*100|roundNumber}} %)</span>
       </b-table-column>
       
+      <template #empty>
+        <div class="has-text-centered">No records</div>
+      </template>
       <div slot="footer" class="is-flex 
         is-flex-direction-row
         is-align-items-center

@@ -100,6 +100,9 @@
       >
         {{props.row.totalRows}}
       </b-table-column>
+      <template #empty>
+        <div class="has-text-centered">No records</div>
+      </template>
       <div slot="footer" class="is-flex 
         is-flex-direction-row
         is-align-items-center
