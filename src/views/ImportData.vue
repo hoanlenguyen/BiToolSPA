@@ -46,7 +46,7 @@
         </b-upload>
       </b-field>
       <b-field class="mt-5">
-        <b-button type="is-info" @click="compareCustomerMobiles" :loading="isLoadingTab2" :disabled="!fileTab2" label="Check customer mobile No." 
+        <b-button type="is-info" @click="compareCustomerMobiles" :loading="isLoadingTab2" :disabled="!fileTab2" label="Clean data" 
           icon-left="database-import"/>
       </b-field>
       <b-field class="mt-5" v-show="isShowResultTab2">
@@ -202,10 +202,10 @@ export default {
     downloadMobileNumberListExcel() {
       console.log("downloadMobileNumberListExcel");
       if (this.mobileNumberList.length > 0) {
-        let mobileList = this.mobileNumberList.map((p) => ({
-          CustomerMobileNo: p,
-        }));
-        this.exportExcelData(mobileList, "CustomerMobileNoList", 30, false);
+        // let mobileList = this.mobileNumberList.map((p) => ({
+        //   CustomerMobileNo: p,
+        // }));
+        this.exportExcelData(this.mobileNumberList, "CustomerMobileNoList", 30, false);
       }
     },
     checkValidPhoneNumber(input) {

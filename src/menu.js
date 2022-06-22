@@ -12,7 +12,7 @@ export default [
     {
       to: '/import-data',
       label: 'Import data',
-      icon: 'database-import',
+      icon: 'database-import'
       // updateMark: true
     },   
     {
@@ -26,6 +26,21 @@ export default [
       icon: 'calendar-clock',
       // updateMark: true
     },
+    {
+      to: '/clean-history',
+      label: 'Clean data history',
+      icon: 'calendar-clock'
+    },
+    {
+      to: '/overall-report',
+      label: 'Overall report',
+      icon: 'file-document'
+    },
+    {
+      to: '/source-report',
+      label: 'Source report',
+      icon: 'briefcase-outline'
+    }
     // {
     //   label: 'Submenus',
     //   subLabel: 'Submenus Example',

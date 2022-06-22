@@ -33,11 +33,35 @@ const routes = [
   },
   {
     meta: {
+      title: 'Clean data history'
+    },
+    path: '/clean-history',
+    name: 'clean-history',    
+    component: () => import('@/views/CleanDataHistory.vue')
+  },
+  {
+    meta: {
+      title: 'Overall Database Report'
+    },
+    path: '/overall-report',
+    name: 'overall-report',    
+    component: () => import('@/views/OverallReport.vue')
+  },
+  {
+    meta: {
       title: 'Export data'
     },
     path: '/export-data',
     name: 'export-data',    
     component: () => import('@/views/ExportData.vue')
+  },
+  {
+    meta: {
+      title: 'Source report'
+    },
+    path: '/source-report',
+    name: 'source-report',    
+    component: () => import('@/views/SourceReport.vue')
   }, 
   {
     meta: {
