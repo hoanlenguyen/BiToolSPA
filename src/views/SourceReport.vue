@@ -22,8 +22,8 @@
         v-slot="props"
         width="400px"
       >
-      <!-- <span v-if="totalTablePoints>0">{{props.row.totalPoints/totalTablePoints *100 |roundNumber}} %</span> -->
-       <span v-if="props.row.totalNumbers>0">{{props.row.totalPoints/props.row.totalNumbers|roundNumber}}</span>
+      <span>{{props.row.averagePoints | roundNumber}}</span>
+      <!-- <span v-if="props.row.totalNumbers>0">{{props.row.totalPoints/props.row.totalNumbers|roundNumber}}</span> -->
       </b-table-column>
       
      <!-- <template #empty>
@@ -58,7 +58,7 @@ export default {
       data: [],
       totalItems:0,
       isLoading:false,
-      totalTablePoints:0      
+      //totalTablePoints:0      
     };
   },
   watch: {},
