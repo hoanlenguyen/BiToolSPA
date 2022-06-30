@@ -19,6 +19,10 @@
         <b-button type="is-info" @click="importData" :loading="isLoading" :disabled="!file" label="Import Data" 
           icon-left="database-import"/>
       </b-field>
+     <!-- <b-field class="mt-5">
+        <b-button type="is-info" @click="testError" label="test error" 
+          icon-left="database-import"/>
+      </b-field> -->
       <b-field class="mt-5" v-show="isShowResult">
         <h5 class="subtitle is-6">Import {{fileName}} successfully!</h5>
       </b-field>
@@ -67,7 +71,7 @@
 
 <script>
 //import moment from "moment";
-import { importCustomerScore, getAdminScores, compareCustomerMobiles } from "@/api/importData";
+import { importCustomerScore, getAdminScores, compareCustomerMobiles,getTestError } from "@/api/importData";
 export default {
   name: "ImportData",
   components: {},
@@ -216,6 +220,9 @@ export default {
         return false;
       const parsed = parseInt(input);
       return !isNaN(parsed);
+    },
+    testError(){
+      getTestError();
     }
   }
 };
