@@ -139,13 +139,13 @@ export default {
               queue: false,
             });
            this.$router.push({ name: "login" });            
-          }else{
+          }
+          else{
             this.$buefy.snackbar.open({
             message: 'Current password is not correct',
             queue: false,
             type: 'is-warning'
-          });
-          }  
+          }); }  
         })
         .catch((error) => {
            this.$buefy.snackbar.open({

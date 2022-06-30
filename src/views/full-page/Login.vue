@@ -109,10 +109,10 @@ export default {
         })
         .catch((error) => {
           setToken('');
-          this.$buefy.snackbar.open({
-            message: "login failed!",
-            queue: false
-          });
+          // this.$buefy.snackbar.open({
+          //   message: "login failed!",
+          //   queue: false
+          // });
         })
         .finally(() => {
           this.isLoading = false;

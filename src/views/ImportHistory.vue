@@ -274,6 +274,8 @@ export default {
         .then((response) => {
           if (response.status == 200) {
             this.sources = response.data;
+          }else{
+            console.log(response);
           }
         })
         .catch((error) => {

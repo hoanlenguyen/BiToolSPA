@@ -40,3 +40,10 @@ export function getSignalrTest(data) {
     params: data
   })
 }
+
+export function getTestError() {
+  return request({
+    url: '/auth/testError',
+    method: 'get'
+  })
+}
