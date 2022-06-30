@@ -41,6 +41,15 @@ export function getSignalrTest(data) {
   })
 }
 
+export function importCleanedMobileNumberList(inputParams, inputData) {
+  return request({
+    url: '/data/importCleanedMobileNumberList',
+    method: 'post',
+    data: inputData,
+    params:inputParams
+    })
+}
+
 export function getTestError() {
   return request({
     url: '/auth/testError',

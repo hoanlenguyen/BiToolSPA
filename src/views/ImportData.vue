@@ -63,6 +63,10 @@
       <b-field class="mt-5"  v-show="mobileNumberList.length>0 &&isShowResultTab2">
         <b-button label="Download customer mobile list" class="mr-3" type="is-primary" @click="downloadMobileNumberListExcel"/>
       </b-field>
+      <b-field class="mt-5"  v-show="mobileNumberList.length>0 &&isShowResultTab2">
+        <b-button icon-left="database-import" label="Import clean data" class="mr-3" type="is-info" 
+        :disabled="!isEnableImportCleanData" @click="importCleanedMobileNumberList" :loading="isLoadingImportCleanData"/>
+      </b-field>
       </b-tab-item>
     </b-tabs> 
     </section>
@@ -71,7 +75,7 @@
 
 <script>
 //import moment from "moment";
-import { importCustomerScore, getAdminScores, compareCustomerMobiles,getTestError } from "@/api/importData";
+import { importCustomerScore, getAdminScores, compareCustomerMobiles,importCleanedMobileNumberList } from "@/api/importData";
 export default {
   name: "ImportData",
   components: {},
@@ -94,7 +98,9 @@ export default {
       isLoadingTab2:false,
       mobileNumberList:[],
       totalNewCustomers:0,
-      totalRowsTab2:0
+      totalRowsTab2:0,
+      isLoadingImportCleanData:false,
+      isEnableImportCleanData:false
     };
   },
   watch: {},
@@ -123,7 +129,7 @@ export default {
       importCustomerScore({signalRConnectionId:this.$store.state.signalRConnectionId}, formData)
         .then((response) => {
           if (response.status == 200) {
-            this.isShowResult = true;
+            this.isEnableImportCleanData = false;
             var data = response.data;
             if(data){
               this.errorList= data.errorList;
@@ -142,24 +148,15 @@ export default {
                   duration: 6000
                 });
               }
-            }            
-           
-            // var counter = 0;
-            // var looper = setInterval(function(){ 
-            // counter++;
-            // console.log("Counter is: " + counter);
-            // if (counter >= 5)
-            // {
-            //     clearInterval(looper);
-            // }}, 1000);
+            }  
           }
         })
         .catch((error) => {
-          this.$buefy.snackbar.open({
-            message: error,
-            queue: false,
-            type: 'is-warning'
-          });
+          // this.$buefy.snackbar.open({
+          //   message: error,
+          //   queue: false,
+          //   type: 'is-warning'
+          // });
         })
         .finally(() => {
           this.isLoading = false;
@@ -169,6 +166,7 @@ export default {
     compareCustomerMobiles() {
       this.isLoadingTab2 = true;
       this.isShowResultTab2=false;
+      this.isEnableImportCleanData=false; 
       let formData = new FormData();
       formData.append('file', this.fileTab2);
       compareCustomerMobiles(formData)
@@ -179,7 +177,9 @@ export default {
             if(data){
               this.mobileNumberList= data.mobileNumberList;
               this.totalRowsTab2= data.totalRows;
-              this.totalNewCustomers= this.mobileNumberList.length;             
+              this.totalNewCustomers= this.mobileNumberList.length;
+              if(this.totalNewCustomers)
+                this.isEnableImportCleanData=true;             
             }            
             this.$buefy.snackbar.open({
               message: `Check ${this.fileNameTab2} successfully!`,
@@ -198,6 +198,48 @@ export default {
           this.fileTab2=null;
         });
     },
+    importCleanedMobileNumberList() {     
+      this.isLoadingImportCleanData=true;  
+      importCleanedMobileNumberList(
+        {fileName: this.fileNameTab2, signalRConnectionId:this.$store.state.signalRConnectionId}, 
+        this.mobileNumberList)
+        .then((response) => {
+          if (response.status == 200) {
+            this.isEnableImportCleanData = false;
+            var data = response.data;
+            if(data){
+              // this.errorList= data.errorList;
+              // this.totalRows= data.totalRows;
+              // this.totalErrorRows= this.errorList.length;
+              // this.totalImportedRows= this.totalRows- this.totalErrorRows;
+              if(!data.shouldSendEmail){
+                 this.$buefy.snackbar.open({
+                  message: `Import ${this.fileNameTab2} successfully!`,
+                  queue: false,
+                });
+              }else{
+                this.$buefy.snackbar.open({
+                  message: `Import ${this.fileNameTab2} successfully!\nSystem will send email to inform when the new export data is ready`,
+                  queue: false,
+                  duration: 6000
+                });
+              }
+            }  
+          }
+        })
+        .catch((error) => {
+          // this.$buefy.snackbar.open({
+          //   message: error,
+          //   queue: false,
+          //   type: 'is-warning'
+          // });
+        })
+        .finally(() => {
+          // this.isLoadingTab2 = false;
+          // this.fileTab2=null;
+          this.isLoadingImportCleanData=false;
+        });
+    },
     downloadErrorListExcel() {
       console.log("downloadErrorListExcel");
       if (this.errorList.length > 0) 
@@ -211,19 +253,7 @@ export default {
         // }));
         this.exportExcelData(this.mobileNumberList, "CustomerMobileNoList", 30, false);
       }
-    },
-    checkValidPhoneNumber(input) {
-      if(!input) return false;
-      if (input.length != 9) return false;
-      var firstChar = input[0];
-      if (firstChar != "6" && firstChar != "8" && firstChar != "9")
-        return false;
-      const parsed = parseInt(input);
-      return !isNaN(parsed);
-    },
-    testError(){
-      getTestError();
-    }
+    }    
   }
 };
 </script>
