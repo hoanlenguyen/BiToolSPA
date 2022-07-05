@@ -145,12 +145,12 @@ export default {
   },
   computed: {
     filteredDataArray() {
-      if(!this.searchSource) return this.sources;
+      if(!this.sourceName) return this.sources;
       return this.sources.filter((option) => {
           return option
               .toString()
               .toLowerCase()
-              .indexOf(this.searchSource.toLowerCase()) >= 0
+              .indexOf(this.sourceName.toLowerCase()) >= 0
       })
     }
   },
