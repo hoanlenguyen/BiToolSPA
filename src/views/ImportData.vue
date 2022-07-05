@@ -3,26 +3,59 @@
     <section class="section is-main-section">      
     <b-tabs v-model="activeTab">
       <b-tab-item label="Import data" type="is-boxed">
-        <b-field class="file is-primary" :class="{ 'has-name': !!file }" >
-        <b-upload v-model="file" class="file-label" @change.native="isShowResult=false; isActiveMessage=false; fileName=file?file.name:''" 
-          accept=".xlsx, .xls, .csv" required validationMessage="Please select correct file type">
-          <span class="file-cta">
-            <b-icon class="file-icon" icon="upload" ></b-icon>
-            <span class="file-label" >Click to upload</span>
-          </span>
-          <span class="file-name" v-if="file">
-            {{ file.name }}
-          </span>
-        </b-upload>
-      </b-field>
-      <b-field class="mt-5">
-        <b-button type="is-info" @click="importData" :loading="isLoading" :disabled="!file" label="Import Data" 
-          icon-left="database-import"/>
-      </b-field>
-     <!-- <b-field class="mt-5">
-        <b-button type="is-info" @click="testError" label="test error" 
-          icon-left="database-import"/>
-      </b-field> -->
+        <!--<b-field class="file is-primary" :class="{ 'has-name': !!file }" >
+           <b-upload v-model="file" class="file-label" @change.native="isShowResult=false; isActiveMessage=false; fileName=file?file.name:''" 
+            accept=".xlsx, .xls, .csv" required validationMessage="Please select correct file type">
+            <span class="file-cta">
+              <b-icon class="file-icon" icon="upload" ></b-icon>
+              <span class="file-label" >Click to upload</span>
+            </span>
+            <span class="file-name" v-if="file">
+              {{ file.name }}
+            </span>
+          </b-upload>
+        </b-field>-->  
+
+       <b-field class="file is-primary" :class="{ 'has-name': !!file }" >
+          <b-upload multiple v-model="files" class="file-label" @change.native="isShowResult=false; isActiveMessage=false;" 
+            accept=".xlsx, .xls, .csv" required validationMessage="Please select correct file type">
+            <span class="file-cta">
+              <b-icon class="file-icon" icon="upload" ></b-icon>
+              <span class="file-label" >Click to upload</span>
+            </span>          
+          </b-upload>       
+        </b-field>
+
+        <div class="is-flex is-flex-direction-column is-justify-content-flex-start is-flex-wrap-wrap" style="width:10px">
+          <b-tag v-for="(fileItem, index) in files"
+            :key="index"
+            type="is-info"
+            class="is-flex mb-3" >
+            <span class="mr-3">{{fileItem.name}}</span>
+            <button class="delete is-small"
+              type="button"
+              @click="files.splice(index, 1)">
+            </button>
+          </b-tag>
+          <b-autocomplete
+            v-show="files.length>0"
+            open-on-focus
+            v-model="sourceName"
+            :data="filteredDataArray"
+            placeholder="Assign source..."
+            icon-right="magnify"   
+            clearable
+            size="is-small"              
+            @select="option => selected = option">
+            <template #empty>No sources found</template>
+          </b-autocomplete>
+        </div>
+
+        <b-field class="mt-5">
+          <b-button type="is-info" @click="importData" :loading="isLoading" :disabled="files.length==0" label="Import Data" 
+            icon-left="database-import"/>
+        </b-field>
+    
       <b-field class="mt-5" v-show="isShowResult">
         <h5 class="subtitle is-6">Import {{fileName}} successfully!</h5>
       </b-field>
@@ -76,18 +109,25 @@
 <script>
 //import moment from "moment";
 import { importCustomerScore, getAdminScores, compareCustomerMobiles,importCleanedMobileNumberList } from "@/api/importData";
+import { getSource  } from "@/api/importHistory";
 export default {
   name: "ImportData",
   components: {},
+  created() {
+    this.getSource();
+  },
   data() {
     return {
       file: null,
+      files:[],
       fileName:'',
       totalRows:0,
       totalErrorRows:0,
       totalImportedRows:0,
       errorList: [],
-      adminScores: [],      
+      adminScores: [],
+      sourceName:null,
+      sources:[],      
       isLoadProcessExcel: false,
       isLoading: false,
       isShowResult:false,
@@ -102,6 +142,17 @@ export default {
       isLoadingImportCleanData:false,
       isEnableImportCleanData:false
     };
+  },
+  computed: {
+    filteredDataArray() {
+      if(!this.searchSource) return this.sources;
+      return this.sources.filter((option) => {
+          return option
+              .toString()
+              .toLowerCase()
+              .indexOf(this.searchSource.toLowerCase()) >= 0
+      })
+    }
   },
   watch: {},
   methods: {
@@ -124,9 +175,14 @@ export default {
       this.isShowResult=false;
       this.isActiveMessage= false;
       let formData = new FormData();
-      formData.append('file', this.file);
-      console.log(this.$store.state.signalRConnectionId);
-      importCustomerScore({signalRConnectionId:this.$store.state.signalRConnectionId}, formData)
+      //formData.append('file', this.file);
+      for (let i = 0 ; i < this.files.length ; i++) {
+        formData.append('files', this.files[i],this.files[i].name);
+      }
+      //console.log(this.$store.state.signalRConnectionId);
+      if(this.sourceName !== null && this.sourceName.trim() === '') 
+        this.sourceName = null;
+      importCustomerScore({signalRConnectionId:this.$store.state.signalRConnectionId, sourceName: this.sourceName}, formData)
         .then((response) => {
           if (response.status == 200) {
             this.isEnableImportCleanData = false;
@@ -253,6 +309,22 @@ export default {
         // }));
         this.exportExcelData(this.mobileNumberList, "CustomerMobileNoList", 30, false);
       }
+    },
+    getSource() {
+      getSource()
+        .then((response) => {
+          if (response.status == 200) {
+            this.sources = response.data;
+          }else{
+            console.log(response);
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+        })
+        .finally(() => {
+          //this.isLoading = false;
+        });
     }    
   }
 };
