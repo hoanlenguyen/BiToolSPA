@@ -2,20 +2,7 @@
   <div>
     <section class="section is-main-section">      
     <b-tabs v-model="activeTab">
-      <b-tab-item label="Import data" type="is-boxed">
-        <!--<b-field class="file is-primary" :class="{ 'has-name': !!file }" >
-           <b-upload v-model="file" class="file-label" @change.native="isShowResult=false; isActiveMessage=false; fileName=file?file.name:''" 
-            accept=".xlsx, .xls, .csv" required validationMessage="Please select correct file type">
-            <span class="file-cta">
-              <b-icon class="file-icon" icon="upload" ></b-icon>
-              <span class="file-label" >Click to upload</span>
-            </span>
-            <span class="file-name" v-if="file">
-              {{ file.name }}
-            </span>
-          </b-upload>
-        </b-field>-->  
-
+      <b-tab-item label="Import data" type="is-boxed">         
        <b-field class="file is-primary" :class="{ 'has-name': !!file }" >
           <b-upload multiple v-model="files" class="file-label" @change.native="isShowResult=false; isActiveMessage=false;" 
             accept=".xlsx, .xls, .csv" required validationMessage="Please select correct file type">
