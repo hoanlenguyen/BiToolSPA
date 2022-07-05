@@ -40,8 +40,8 @@
           class="mr-4"
           icon-left="reload"
           @click="resetFilter"
-        />
-      </div> -->
+        /> 
+      </div>-->
     </b-table>
   </section>
 </template>
