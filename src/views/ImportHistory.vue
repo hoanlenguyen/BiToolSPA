@@ -197,7 +197,7 @@ export default {
   watch: {},
   computed: {
     filteredDataArray() {
-      if(!this.searchSource) return this.sources;
+      if(this.searchSource===null||this.searchSource==='') return this.sources;
       return this.sources.filter((option) => {
           return option
               .toString()
