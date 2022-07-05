@@ -147,6 +147,7 @@ export default {
   computed: {
     filteredDataArray() {
       if(this.sourceName===null||this.sourceName==='') return this.sources;
+      if(this.sources.length===0) return [];
       return this.sources.filter((option) => {
           return option
               .toString()
