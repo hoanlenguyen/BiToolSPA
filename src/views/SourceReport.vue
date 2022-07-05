@@ -46,10 +46,9 @@
   </section>
 </template>
 <script>
-import moment from "moment";
 import { getSummary  } from "@/api/sourceReport";
 export default {
-  name: "CleanDataHistory",
+  name: "SourceReport",
   created() {
     this.getSummary();
   },
