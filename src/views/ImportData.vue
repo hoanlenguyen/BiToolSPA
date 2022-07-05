@@ -37,7 +37,7 @@
               @click="files.splice(index, 1)">
             </button>
           </b-tag>
-          <!--<b-autocomplete
+          <b-autocomplete
             v-show="files.length>0"
             open-on-focus
             v-model="sourceName"
@@ -46,9 +46,10 @@
             icon-right="magnify"   
             clearable
             size="is-small"              
-            @select="option => selected = option">
+            @select="option => selected = option"
+            :ref="'autocomplete-importdata'">
             <template #empty>No sources found</template>
-          </b-autocomplete> -->
+          </b-autocomplete>
         </div>
 
         <b-field class="mt-5">

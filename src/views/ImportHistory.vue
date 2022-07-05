@@ -77,7 +77,8 @@
             @input="onSelectSource"
             clearable
             size="is-small"              
-            @select="option => selected = option">
+            @select="option => selected = option"
+            :ref="'autocomplete-cleandatahistory'">
             <template #empty>No sources found</template>
           </b-autocomplete>
         </template>
