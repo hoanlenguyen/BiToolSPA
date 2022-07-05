@@ -37,7 +37,7 @@
               @click="files.splice(index, 1)">
             </button>
           </b-tag>
-          <b-autocomplete
+          <!--<b-autocomplete
             v-show="files.length>0"
             open-on-focus
             v-model="sourceName"
@@ -48,7 +48,7 @@
             size="is-small"              
             @select="option => selected = option">
             <template #empty>No sources found</template>
-          </b-autocomplete>
+          </b-autocomplete> -->
         </div>
 
         <b-field class="mt-5">
@@ -126,7 +126,7 @@ export default {
       totalImportedRows:0,
       errorList: [],
       adminScores: [],
-      sourceName:null,
+      sourceName:'',
       sources:[],      
       isLoadProcessExcel: false,
       isLoading: false,
