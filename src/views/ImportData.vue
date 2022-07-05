@@ -216,7 +216,8 @@ export default {
         })
         .finally(() => {
           this.isLoading = false;
-          this.file=null;
+          this.files=[];
+          this.sourceName = null;
         });
     },
     compareCustomerMobiles() {
