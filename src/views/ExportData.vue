@@ -384,7 +384,7 @@ import moment from "moment";
 import Multiselect from "vue-multiselect";
 import { saveAs } from 'file-saver';
 import { getAdminScores, getAdminCampaigns } from "@/api/importData";
-import { getCustomers, getCustomerCount, assignCampaignToCustomers, downloadCustomersBySP } from "@/api/exportData";
+import { getCustomerCount, assignCampaignToCustomers, downloadCustomersBySP } from "@/api/exportData";
 export default {
   name: "ExportData",
   components: { Multiselect },

@@ -66,33 +66,21 @@
         searchable 
         sortable
         width="300px">
-        <template #searchable="props">
-        <!--  <b-input
-            lazy
-            icon-right-clickable
-            :maxlength="50"
-            :has-counter="false"
-            v-model="filter.source"
-            @icon-right-click="onChangePageSize"
-            @keyup.native.enter="onChangePageSize"
+        <template #searchable="props">        
+          <b-autocomplete
+            open-on-focus
+            v-model="searchSource"
+            :data="filteredDataArray"
             placeholder="Search..."
-            icon-right="magnify"
-            size="is-small" /> -->
-
-            <b-autocomplete
-              open-on-focus
-              v-model="searchSource"
-              :data="filteredDataArray"
-              placeholder="Search..."
-              icon-right="magnify"                
-              @keyup.native.enter="onChangePageSize"
-              @input="onSelectSource"
-              clearable
-              size="is-small"              
-              @select="option => selected = option"
-              :ref="'autocomplete-cleandata'">
-              <template #empty>No sources found</template>
-            </b-autocomplete>
+            icon-right="magnify"                
+            @keyup.native.enter="onChangePageSize"
+            @input="onSelectSource"
+            clearable
+            size="is-small"              
+            @select="option => selected = option"
+            :ref="'autocomplete-cleandata'">
+            <template #empty>No sources found</template>
+          </b-autocomplete>
         </template>
         <template v-slot="props">{{ props.row.source }}</template>        
       </b-table-column>
@@ -189,7 +177,7 @@
 import moment from "moment";
 import { getPaging, getSource  } from "@/api/cleanDataHistory";
 export default {
-  name: "CleanDataHistory",
+  name: "CleanDataHistory-view",
   created() {
     this.getSource();
     this.getImportHistories();
@@ -238,7 +226,7 @@ export default {
   watch: {},
   computed: {
     filteredDataArray() {
-      if(this.searchSource===null||this.searchSource==='') return this.sources;
+      if(!this.searchSource) return this.sources;
       return this.sources.filter((option) => {
           return option
               .toString()

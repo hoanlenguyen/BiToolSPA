@@ -148,7 +148,7 @@
 import moment from "moment";
 import { getPagingImportHistories, getSource  } from "@/api/importHistory";
 export default {
-  name:"ImportHistory",
+  name:"ImportHistory-view",
   created() {
     this.getSource();
     this.getImportHistories();
@@ -197,7 +197,7 @@ export default {
   watch: {},
   computed: {
     filteredDataArray() {
-      if(this.searchSource===null||this.searchSource==='') return this.sources;
+      if(!this.searchSource) return this.sources;
       return this.sources.filter((option) => {
           return option
               .toString()

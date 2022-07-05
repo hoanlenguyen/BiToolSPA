@@ -108,11 +108,10 @@
 </template>
 
 <script>
-//import moment from "moment";
 import { importCustomerScore, getAdminScores, compareCustomerMobiles,importCleanedMobileNumberList } from "@/api/importData";
 import { getSource  } from "@/api/importHistory";
 export default {
-  name: "ImportData",
+  name: "Import-Data-view",
   components: {},
   created() {
     this.getSource();
@@ -127,7 +126,7 @@ export default {
       totalImportedRows:0,
       errorList: [],
       adminScores: [],
-      sourceName:'',
+      sourceName: null,
       sources:[],      
       isLoadProcessExcel: false,
       isLoading: false,
@@ -146,8 +145,7 @@ export default {
   },
   computed: {
     filteredDataArray() {
-      if(this.sourceName===null||this.sourceName==='') return this.sources;
-      if(this.sources.length===0) return [];
+      if(!this.sourceName) return this.sources;
       return this.sources.filter((option) => {
           return option
               .toString()
