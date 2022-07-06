@@ -5,8 +5,8 @@
     "dev": "vite --host",
     "serve": "vue-cli-service serve",
     "serve:vite": "vite serve",
-    "build": "vue-cli-service build --modern",
-    "build:prod": "vue-cli-service build",
+    "build": "vue-cli-service build --modern --skip-plugins @vue/cli-plugin-eslint",
+    "build:prod": "vue-cli-service build --skip-plugins @vue/cli-plugin-eslint",
     "build:dev": "vue-cli-service build --mode dev",
     "build:vite": "vite build"
   },

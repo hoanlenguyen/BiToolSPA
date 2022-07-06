@@ -67,19 +67,20 @@
         sortable
         width="300px">
         <template #searchable="props">        
-            <b-autocomplete
-              open-on-focus
-              v-model="searchSource"
-              :data="filteredDataArray"
-              placeholder="Search..."
-              icon-right="magnify"                
-              @keyup.native.enter="onChangePageSize"
-              @input="onSelectSource"
-              clearable
-              size="is-small"              
-              @select="option => selected = option">
-              <template #empty>No sources found</template>
-            </b-autocomplete>
+          <b-autocomplete
+            open-on-focus
+            v-model="searchSource"
+            :data="filteredDataArray"
+            placeholder="Search..."
+            icon-right="magnify"                
+            @keyup.native.enter="onChangePageSize"
+            @input="onSelectSource"
+            clearable
+            size="is-small"              
+            @select="option => selected = option"
+            :ref="'autocomplete-cleandatahistory'">
+            <template #empty>No sources found</template>
+          </b-autocomplete>
         </template>
         <template v-slot="props">{{ props.row.source }}</template>        
       </b-table-column>
@@ -147,7 +148,7 @@
 import moment from "moment";
 import { getPagingImportHistories, getSource  } from "@/api/importHistory";
 export default {
-  name:"ImportHistory",
+  name:"ImportHistory-view",
   created() {
     this.getSource();
     this.getImportHistories();
@@ -173,6 +174,7 @@ export default {
       importTimeTo:null,
       sources:[],
       searchSource:null,
+      selected:null,
       filter:{
         page:1,
         rowsPerPage:20,

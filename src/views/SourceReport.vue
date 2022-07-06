@@ -40,16 +40,15 @@
           class="mr-4"
           icon-left="reload"
           @click="resetFilter"
-        /> -->
-      </div>
+        /> 
+      </div>-->
     </b-table>
   </section>
 </template>
 <script>
-import moment from "moment";
 import { getSummary  } from "@/api/sourceReport";
 export default {
-  name: "CleanDataHistory",
+  name: "SourceReport",
   created() {
     this.getSummary();
   },
