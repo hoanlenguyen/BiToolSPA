@@ -103,6 +103,35 @@
         </b-field> 
       </b-field>
 
+      <b-field class="mb-3">
+        <div class="mr-3">
+          <p class="subtitle is-6 pt-3">Tagged Campaign</p>
+        </div>
+        <!--<b-select
+          placeholder="Select campaign"
+          v-model="filter.assignedCampaignID"
+          :clearable="true">
+          <option
+            v-for="option in adminCampaigns"
+            :value="option.campaignID"
+            :key="option.campaignID">
+            {{ option.campaignName }}
+          </option>
+        </b-select> -->
+        <b-field>
+          <multiselect
+            v-model="selectAssignedCampaign"
+            tag-placeholder=""
+            placeholder="Select Tagged campaign"
+            label="name"
+            track-by="id"
+            :options="customizedAdminCampaigns"
+            selectLabel="Add"
+            deselectLabel="Remove"
+          ></multiselect>  
+        </b-field>        
+      </b-field>
+
       <b-field grouped class="mb-3">
         <div class="mr-3">
           <p class="subtitle is-6 pt-3">Last 3 Campaigns Used</p>
@@ -112,8 +141,8 @@
             v-model="selectLast3CampaignsUsed"
             tag-placeholder=""
             placeholder="Select campaigns"
-            label="campaignName"
-            track-by="campaignID"
+            label="name"
+            track-by="id"
             :options="adminCampaigns"
             :multiple="true"
             :max="3"
@@ -296,6 +325,7 @@
           <b-input v-model="filter.exportVsPointsNumberTo" type="number"></b-input>
         </b-field>  
       </b-field>
+      
 
       <b-field grouped class="mb-3">
         <div class="mr-3">
@@ -367,7 +397,7 @@
             @click="assignCampaignToCustomers"
             :disabled="!filter.campaignID"
             :loading="isConfirmingCampaign"
-          />
+          />          
         </b-field>
       </b-field>
         <b-modal v-model="isImageModalActive"  :width="`100%`" scroll="keep">
@@ -384,7 +414,7 @@ import moment from "moment";
 import Multiselect from "vue-multiselect";
 import { saveAs } from 'file-saver';
 import { getAdminScores, getAdminCampaigns } from "@/api/importData";
-import { getCustomerCount, assignCampaignToCustomers, downloadCustomersBySP } from "@/api/exportData";
+import { getCustomerCount, assignCampaignToCustomers, downloadCustomersBySP, removeAssignedCampaign } from "@/api/exportData";
 export default {
   name: "ExportData",
   components: { Multiselect },
@@ -396,6 +426,7 @@ export default {
     return {
       adminScores: [],
       adminCampaigns: [],
+      customizedAdminCampaigns: [],
       occurredCategories:[],
       resultsCategories:[],
       exportVsPointsExceptions:["No Occurance","No Export"],
@@ -413,6 +444,7 @@ export default {
         dateLastExportedFrom: null,
         dateLastExportedTo: null,
 
+        assignedCampaignID:null,
         last3CampaignsUsed:null,
 
         dateLastOccurredFrom:null,
@@ -457,6 +489,7 @@ export default {
         dateLastExportedFrom: null,
         dateLastExportedTo: null,
 
+        assignedCampaignID:null,
         last3CampaignsUsed:null,
 
         dateLastOccurredFrom:null,
@@ -504,7 +537,9 @@ export default {
       isLoadingDownload: false,
       isShowCampaign: false,
       isConfirmingCampaign: false,
-      isImageModalActive:false
+      isImageModalActive:false,
+      selectAssignedCampaign:null,
+      loadingRemoveAssignedCampaign:false
     };
   },
   computed: {
@@ -531,6 +566,7 @@ export default {
       this.selectOccurredCategories=[];
       this.selectResultsCategories=[];
       this.selectExportVsPointsExceptions=[];
+      this.selectAssignedCampaign=null;
     },
     getAdminScoreList() {
       //this.isLoading = true;
@@ -558,6 +594,7 @@ export default {
         .then((response) => {
           if (response.status == 200) {
             this.adminCampaigns = response.data;
+            this.customizedAdminCampaigns= [{name:"None", id:0},...this.adminCampaigns]
           }
         })
         .catch((error) => {
@@ -567,8 +604,7 @@ export default {
           //this.isLoading = false;
         });
     },
-    getCustomerCount() {
-      this.isLoading = true;
+    processFilter(){
       const outputFormat = "YYYY-MM-DD";
       this.filter.dateFirstAddedFrom =this.dateFirstAddedFrom? moment(this.dateFirstAddedFrom).format(outputFormat):null;
       this.filter.dateFirstAddedTo =this.dateFirstAddedTo? moment(this.dateFirstAddedTo).format(outputFormat):null;
@@ -603,13 +639,16 @@ export default {
       if(!this.filter.exportTop ||isNaN(this.filter.exportTop))
         this.filter.exportTop=null;
 
+      this.filter.assignedCampaignID = this.selectAssignedCampaign? this.selectAssignedCampaign.campaignID:null;
+    },
+    getCustomerCount() {
+      this.isLoading = true;
+      this.processFilter();      
       getCustomerCount(this.filter)
         .then((response) => {
           if (response.status == 200 && response.data) {
             const data=  response.data;
             this.filter.totalCount=  this.totalCount= data.totalCount;
-            //this.customerList = response.data;
-            //console.log(this.customerList);
           }
         })
         .catch((error) => {
@@ -623,40 +662,7 @@ export default {
     },
     downloadCustomerList() {
       this.isLoadingDownload = true;
-      const outputFormat = "YYYY-MM-DD";
-      this.filter.dateFirstAddedFrom =this.dateFirstAddedFrom? moment(this.dateFirstAddedFrom).format(outputFormat):null;
-      this.filter.dateFirstAddedTo =this.dateFirstAddedTo? moment(this.dateFirstAddedTo).format(outputFormat):null;
-
-      this.filter.dateLastExportedFrom =this.dateLastExportedFrom? moment(this.dateLastExportedFrom).format(outputFormat):null;
-      this.filter.dateLastExportedTo =this.dateLastExportedTo? moment(this.dateLastExportedTo).format(outputFormat):null;
-
-      this.filter.dateLastOccurredFrom =this.dateLastOccurredFrom? moment(this.dateLastOccurredFrom).format(outputFormat):null;
-      this.filter.dateLastOccurredTo =this.dateLastOccurredTo? moment(this.dateLastOccurredTo).format(outputFormat):null;      
-
-      this.filter.last3CampaignsUsed =this.selectLast3CampaignsUsed.length>0?
-        this.selectLast3CampaignsUsed.map((p) => p.campaignID).join() : null;
-
-      this.filter.occurredCategories = this.selectOccurredCategories.length>0?
-        this.selectOccurredCategories.map((p) => p.scoreID).join(): null;
-      
-      this.filter.resultsCategories =this.selectResultsCategories.length>0?
-        this.selectResultsCategories.map((p) => p.scoreID).join(): null;
-      
-      this.filter.exportVsPointsExceptions =this.selectExportVsPointsExceptions.length>0?
-        this.selectExportVsPointsExceptions.join(): null;
-      
-      if(this.filter.sortingValue){
-        const sortingValue = this.filter.sortingValue.split(" ");
-        this.filter.sortBy=sortingValue[0];
-        this.filter.sortDirection=sortingValue[1];
-      }else{
-        this.filter.sortBy=null;
-        this.filter.sortDirection=null;
-      }
-
-      if(!this.filter.exportTop ||isNaN(this.filter.exportTop))
-        this.filter.exportTop=null;
-
+      this.processFilter();
       downloadCustomersBySP(this.filter)
         .then((response) => {
           if (response.status == 200 && response.data) {
@@ -683,11 +689,11 @@ export default {
     },
     downloadCustomerExcel() {
       console.log("downloadCustomerExcel");
-      if (this.totalCount > 0) {
+      if (this.customerList.length > 0) {
         let mobileList = this.customerList.map((p) => ({
           CustomerMobileNo: p,
         }));
-        this.exportExcelData(mobileList, "CustomerMobileNoList", 30, false);
+        this.exportExcelData(mobileList, "CustomerMobileNoList", 60, false);
       }
     },
     assignCampaignToCustomers() {
@@ -721,6 +727,27 @@ export default {
           this.isConfirmingCampaign = false;
         });
     },
+    removeAssignedCampaign(){
+      if(!this.selectAssignedCampaign.campaignID) 
+        return;
+      this.loadingRemoveAssignedCampaign=true;
+      removeAssignedCampaign(this.selectAssignedCampaign.campaignID)
+        .then((response) => {
+          if (response.status == 200) {
+            this.$buefy.snackbar.open({
+                message: `Remove assigned campaign successfully!`,
+                queue: false,
+              });
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+        })
+        .finally(() => {
+          this.selectAssignedCampaign = null;
+          this.loadingRemoveAssignedCampaign=false;
+        });
+    }
   },
 };
 </script>
