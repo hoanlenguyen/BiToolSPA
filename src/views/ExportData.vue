@@ -366,7 +366,7 @@
             <span>Download and Remove 'Tagged Campaign'</span>
           </b-button>
         </p>
-        <b-field
+       <!-- <b-field
           class="control"
           v-show="isShowCampaign"
         >
@@ -390,7 +390,7 @@
             :disabled="!filter.campaignID"
             :loading="isConfirmingCampaign"
           />          
-        </b-field>
+        </b-field> -->
       </b-field>
         <b-modal v-model="isImageModalActive"  :width="`100%`" scroll="keep">
           <figure  class="image is-3by1 is-fullwidth">
