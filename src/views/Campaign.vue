@@ -29,6 +29,7 @@
         label="Name"
         sortable        
         width="200px"
+        header-class="is-size-7"
         v-slot="props"
       >       
       {{ props.row.name}}
@@ -39,6 +40,7 @@
         label="StartDate"
         sortable
         v-slot="props"
+        header-class="is-size-7"
         width="200px">
        {{ props.row.startDate | dateTime('DD-MM-YYYY') }} 
       </b-table-column>
@@ -48,6 +50,7 @@
         label="Brand"
         sortable
         v-slot="props"
+        header-class="is-size-7"
         width="150px">
        {{ props.row.brand }} 
       </b-table-column>
@@ -57,6 +60,7 @@
         label="Channel"
         sortable
         v-slot="props"
+        header-class="is-size-7"
         width="150px">
        {{ props.row.channel }} 
       </b-table-column>
@@ -66,6 +70,7 @@
         label="Amount"
         sortable
         v-slot="props"
+        header-class="is-size-7"
         width="150px">
        {{ props.row.amount }} 
       </b-table-column>
@@ -75,7 +80,8 @@
         label="Point Range From"
         sortable
         v-slot="props"
-        width="150px">
+        header-class="is-size-7"
+        width="200px">  
        {{ props.row.pointRangeFrom }} 
       </b-table-column>
 
@@ -84,7 +90,8 @@
         label="Point Range To"
         sortable
         v-slot="props"
-        width="150px">
+        header-class="is-size-7"
+        width="200px">      
        {{ props.row.pointRangeTo }} 
       </b-table-column>
        
@@ -93,6 +100,7 @@
         label="Export Time From"
         sortable
         v-slot="props"
+        header-class="is-size-7"
         width="300px">
        {{ props.row.exportTimeFrom |  dateTime('DD-MM-YYYY') }} 
       </b-table-column>
@@ -102,6 +110,7 @@
         label="ExportTimeTo"
         sortable
         v-slot="props"
+        header-class="is-size-7"
         width="300px">
        {{ props.row.exportTimeTo |  dateTime('DD-MM-YYYY') }} 
       </b-table-column>
@@ -111,6 +120,7 @@
         label="CreationTime"
         sortable
         v-slot="props"
+        header-class="is-size-7"
         width="300px">
        {{ props.row.creationTime | dateTime }} 
       </b-table-column>
@@ -119,7 +129,7 @@
         field="Edit"
         label="Edit"        
         v-slot="props"
-        width="100px">        
+        width="120px">        
         <b-button 
           title="edit"          
           class="button mr-5"
