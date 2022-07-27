@@ -203,7 +203,6 @@ export default {
       cleanTimeTo:null,
       sources:[],
       searchSource:null,
-      selected:null,
       filter:{
         page:1,
         rowsPerPage:20,

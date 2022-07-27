@@ -5,16 +5,6 @@ import VueRouter from 'vue-router'
 Vue.use(VueRouter)
 
 const routes = [
-  // {
-  //   // Document title tag
-  //   // We combine it with defaultDocumentTitle set in `src/main.js` on router.afterEach hook
-  //   meta: {
-  //     title: 'Dashboard'
-  //   },
-  //   path: '/',
-  //   name: 'home',
-  //   component: Home
-  // },
   {
     meta: {
       title: 'Import data'
@@ -63,6 +53,22 @@ const routes = [
     name: 'source-report',    
     component: () => import('@/views/SourceReport.vue')
   }, 
+  {
+    meta: {
+      title: 'Points grading'
+    },
+    path: '/points-grading',
+    name: 'points-grading',    
+    component: () => import('@/views/PointsGrading.vue')
+  }, 
+  {
+    meta: {
+      title: 'Campaign'
+    },
+    path: '/campaign',
+    name: 'campaign',    
+    component: () => import('@/views/Campaign.vue')
+  },
   {
     meta: {
       title: 'Profile'

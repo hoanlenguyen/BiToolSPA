@@ -14,8 +14,9 @@
               {{ file.name }}
             </span>
           </b-upload>
-        </b-field>--> 
-        <b-field class="file is-primary" :class="{ 'has-name': !!files.length }" >
+        </b-field>-->  
+
+       <b-field class="file is-primary" :class="{ 'has-name': !!file }" >
           <b-upload multiple v-model="files" class="file-label" @change.native="isShowResult=false; isActiveMessage=false;" 
             accept=".xlsx, .xls, .csv" required validationMessage="Please select correct file type">
             <span class="file-cta">
@@ -37,9 +38,8 @@
             </button>
           </b-tag>
           <b-autocomplete
-            v-if="files.length>0"
+            v-show="files.length>0"
             open-on-focus
-            keep-first
             v-model="sourceName"
             :data="filteredDataArray"
             placeholder="Assign source..."
@@ -126,8 +126,7 @@ export default {
       totalImportedRows:0,
       errorList: [],
       adminScores: [],
-      sourceName: '',
-      selected: null,
+      sourceName: null,
       sources:[],      
       isLoadProcessExcel: false,
       isLoading: false,
@@ -141,7 +140,7 @@ export default {
       totalNewCustomers:0,
       totalRowsTab2:0,
       isLoadingImportCleanData:false,
-      isEnableImportCleanData:false      
+      isEnableImportCleanData:false
     };
   },
   computed: {
@@ -181,10 +180,9 @@ export default {
         formData.append('files', this.files[i],this.files[i].name);
       }
       //console.log(this.$store.state.signalRConnectionId);
-      let sourceName= this.sourceName;
-      if(sourceName !== null && sourceName.trim() === '') 
-        sourceName = null;
-      importCustomerScore({signalRConnectionId:this.$store.state.signalRConnectionId, sourceName}, formData)
+      if(this.sourceName !== null && this.sourceName.trim() === '') 
+        this.sourceName = null;
+      importCustomerScore({signalRConnectionId:this.$store.state.signalRConnectionId, sourceName: this.sourceName}, formData)
         .then((response) => {
           if (response.status == 200) {
             this.isEnableImportCleanData = false;
@@ -219,7 +217,7 @@ export default {
         .finally(() => {
           this.isLoading = false;
           this.files=[];
-          this.sourceName = '';
+          this.sourceName = null;
         });
     },
     compareCustomerMobiles() {
