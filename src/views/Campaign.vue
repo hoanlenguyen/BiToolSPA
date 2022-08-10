@@ -304,7 +304,7 @@
           </b-field> 
 
           <b-field label="Export Times To" class="column is-3">
-           <b-input
+            <b-input
               type="Number"
               v-model="model.exportTimesTo"
               :min="0"
@@ -424,7 +424,7 @@ export default {
         remarks:null,
         id:0
       },
-      isModalActive:true,
+      isModalActive:false,
       isDeleteModalActive:false,
       isLoadingAssignCampaign:false,
       isAssignCampaignModalActive:false,
