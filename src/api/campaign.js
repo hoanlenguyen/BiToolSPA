@@ -42,3 +42,24 @@ export function assignCampaign(input) {
     data:input    
   })
 }
+
+export function getMaxAmount() {
+  return request({
+    url: '/campaign/maxAmount',
+    method: 'get'
+  })
+}
+
+export function getMaxTotalPoints() {
+  return request({
+    url: '/campaign/maxTotalPoints',
+    method: 'get'
+  })
+}
+
+export function countCustomersOfTaggedCampagign(campagignId) {
+  return request({
+    url: `'/Campaign/countCustomersOfTaggedCampagign/${campagignId}'`,
+    method: 'get'
+  })
+}
